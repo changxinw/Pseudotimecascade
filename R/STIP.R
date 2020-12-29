@@ -17,6 +17,7 @@ PreprocessSTIP <- function(x, gl){
 #' @details This function generates the state transition pattern of input gene
 #' @param x a single cell expression matrix or data.frame with rows as genes and columns as cells. Cells should follow the order of pseudo time
 #' @return A dataframe of state transtion pattern
+#' @export genePattern
 #' @author Zhicheng Ji, Changxin Wan
 genePattern <- function(x){
   ### separation based on zero points

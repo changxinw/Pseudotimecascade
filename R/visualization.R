@@ -24,3 +24,40 @@ HeatmapSTIP <- function(x, gl, annotation, ...){
   return(p)
 }
 
+
+#' @title ScatterPlotSTIP
+#' @description  Generate scatter plot for gene in fitted matrix
+#' @details Input fitted expression, output a scatter plot
+#' @param data A fitted gene expression matrix
+#' @param gene Plotted gene in the matrix
+#' @return A ggplot object
+#' @author Zhicheng Ji, Changxin Wan
+#' @export ScatterPlotSTIP
+#' @import ggplot2
+ScatterPlotSTIP <- function(data, gene) {
+  plot_df <- data.frame(t(data[gene, ]), row.names = colnames(data))
+  plot_df$cell <- 1:nrow(plot_df)
+  colnames(plot_df) <- c("gene", "cell")
+  zp <- plot_df$cell[which(sapply(1:(nrow(plot_df)-1), function(x) plot_df[x, "gene"]*plot_df[x+1, "gene"]<=0))]
+
+  p <- ggplot(plot_df, aes_string(x="cell", y="gene")) +
+    geom_point(size=0.5) +
+    labs(x="Cells", y=gene) +
+    geom_vline(xintercept = zp, color="red", linetype="dashed", size=0.5) +
+    geom_hline(yintercept = 0, color="red", linetype="dashed", size=0.5) +
+    theme(legend.position="none",
+          legend.title = element_text(size = 7),
+          legend.text = element_text(size=5),
+          legend.key.width=unit(1, "lines"),
+          plot.title = element_text(face="bold", hjust=0.5),
+          plot.margin = unit(c(1, 0.5, 0.5, 0.5), "lines"),
+          axis.line = element_line(colour = "black"),
+          axis.text.x = element_text(face="bold"),
+          axis.title.x=element_blank(),
+          axis.title.y=element_text(face="bold"),
+          axis.text.y = element_text(face="bold"),
+          panel.background = element_blank(),
+          panel.grid = element_blank())
+  return(p)
+}
+

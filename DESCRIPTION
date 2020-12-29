@@ -9,9 +9,10 @@ Description: More about what it does (maybe more than one line)
 Depends:
     R (>= 3.5.0)
 Imports:
-    ComplexHeatmap
+    ComplexHeatmap, VGAM, circlize, dplyr, grDevices
 Suggests:
     devtools
-License: MIT
+License: MIT | file LICENSE
 Encoding: UTF-8
 LazyData: false
+RoxygenNote: 7.1.1

@@ -4,12 +4,14 @@
 \alias{ScatterPlotSTIP}
 \title{ScatterPlotSTIP}
 \usage{
-ScatterPlotSTIP(data, gene)
+ScatterPlotSTIP(data, gene, count = FALSE)
 }
 \arguments{
 \item{data}{A fitted gene expression matrix}
 
 \item{gene}{Plotted gene in the matrix}
+
+\item{count}{set true if data is count matrix}
 }
 \value{
 A ggplot object

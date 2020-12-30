@@ -7,10 +7,11 @@
 #' @param ... parameters passed to Heatmap
 #' @return A ComplexHeatmap object
 #' @author Zhicheng Ji, Changxin Wan
-#' @export
+#' @export HeatmapSTIP
 #' @import ComplexHeatmap circlize dplyr grDevices
 
 HeatmapSTIP <- function(x, gl, annotation, ...){
+  x <- x[names(annotation), ]
   paletteLength <- 1000
   myColor <- colorRampPalette(c("darkblue", "#6baed6", "#bdd7e7", "white", "#fcae91", "#fb6a4a", "darkred"))(paletteLength)
   myBreaks <- c(seq(min(x), 0, length.out=paletteLength/2), seq(max(x)/paletteLength, max(x), length.out=paletteLength/2))
@@ -30,11 +31,12 @@ HeatmapSTIP <- function(x, gl, annotation, ...){
 #' @details Input fitted expression, output a scatter plot
 #' @param data A fitted gene expression matrix
 #' @param gene Plotted gene in the matrix
+#' @param count set true if data is count matrix
 #' @return A ggplot object
 #' @author Zhicheng Ji, Changxin Wan
 #' @export ScatterPlotSTIP
 #' @import ggplot2
-ScatterPlotSTIP <- function(data, gene) {
+ScatterPlotSTIP <- function(data, gene, count=FALSE) {
   plot_df <- data.frame(t(data[gene, ]), row.names = colnames(data))
   plot_df$cell <- 1:nrow(plot_df)
   colnames(plot_df) <- c("gene", "cell")
@@ -43,8 +45,6 @@ ScatterPlotSTIP <- function(data, gene) {
   p <- ggplot(plot_df, aes_string(x="cell", y="gene")) +
     geom_point(size=0.5) +
     labs(x="Cells", y=gene) +
-    geom_vline(xintercept = zp, color="red", linetype="dashed", size=0.5) +
-    geom_hline(yintercept = 0, color="red", linetype="dashed", size=0.5) +
     theme(legend.position="none",
           legend.title = element_text(size = 7),
           legend.text = element_text(size=5),
@@ -58,6 +58,10 @@ ScatterPlotSTIP <- function(data, gene) {
           axis.text.y = element_text(face="bold"),
           panel.background = element_blank(),
           panel.grid = element_blank())
+  if (!count){
+    p <- p + geom_vline(xintercept = zp, color="red", linetype="dashed", size=0.5) +
+             geom_hline(yintercept = 0, color="red", linetype="dashed", size=0.5)
+  }
   return(p)
 }
 

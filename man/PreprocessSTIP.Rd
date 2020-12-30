@@ -4,15 +4,15 @@
 \alias{PreprocessSTIP}
 \title{PreprocessSTIP}
 \usage{
-PreprocessSTIP(x, gl)
+PreprocessSTIP(data, gl)
 }
 \arguments{
-\item{x}{a single cell expression matrix or data.frame with rows as genes and columns as cells. Cells should follow the order of pseudo time}
+\item{data}{a single cell expression matrix or data.frame with rows as genes and columns as cells. Cells should follow the order of pseudo time}
 
 \item{gl}{marked gene list}
 }
 \value{
-A scaled gene expression matrix
+A Heatmap-class object
 }
 \description{
 State Transition Inference Prediction Preprocess

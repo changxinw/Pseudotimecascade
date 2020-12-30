@@ -4,10 +4,10 @@
 \alias{genePattern}
 \title{genePattern}
 \usage{
-genePattern(x)
+genePattern(data)
 }
 \arguments{
-\item{x}{a single cell expression matrix or data.frame with rows as genes and columns as cells. Cells should follow the order of pseudo time}
+\item{data}{a single cell expression matrix or data.frame with rows as genes and columns as cells. Cells should follow the order of pseudo time}
 }
 \value{
 A dataframe of state transtion pattern

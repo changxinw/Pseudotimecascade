@@ -7,7 +7,7 @@
 fitData(
   data,
   pseudo.time = colnames(data),
-  dropout.rate = 0.9,
+  zero.rate = 0.9,
   p.adjust.method = "BH",
   p.cutoff = 0.05,
   adj.p.cutoff = 0.05,
@@ -21,7 +21,7 @@ fitData(
 
 \item{pseudo.time}{cells ranked according to pseudo time}
 
-\item{dropout.rate}{cutoff of dropout rate to filter gene}
+\item{zero.rate}{cutoff of zero rate among cells to filter gene}
 
 \item{p.adjust.method}{method for multiple hypothesis test}
 

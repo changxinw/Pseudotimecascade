@@ -51,8 +51,13 @@ fitData <- function(data, pseudo.time=colnames(data), zero.rate=0.9, p.adjust.me
   ### p value adjustment method
   qval_data <- p.adjust(unlist(pval_data), method = p.adjust.method)
   ### set cutoff for fdr here
-  fit_data_sig <- as.data.frame(fit_data[qval_data<=adj.p.cutoff & unlist(pval_data)<=p.cutoff, ])
+  # fit_data_sig <- as.data.frame(fit_data[qval_data<=adj.p.cutoff & unlist(pval_data)<=p.cutoff, ])
 
-  return(fit_data_sig)
+  res_list <- list()
+  res_list[["data"]] <- fit_data
+  res_list[["pval"]] <- unlist(pval_data)
+  res_list[["qval"]] <- qval_data
+
+  return(res_list)
 }
 

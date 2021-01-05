@@ -38,7 +38,7 @@ genePattern <- function(data){
   gene_group$switch_point <- sapply(rownames(gene_group), function(x) paste0(sub("V", "", zp[[x]]), collapse=","))
   gene_group$switch_point_number <- sapply(zp, length)
   colnames(gene_group) <- c("pattern", "rank_point", "switch_point", "switch_point_number")
-  gene_group <- gene_group[with(gene_group, order(pattern, switch_point)), ]
+  gene_group <- gene_group[with(gene_group, order(pattern, rank_point)), ]
 
   return(gene_group)
 }

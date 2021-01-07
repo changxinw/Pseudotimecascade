@@ -28,6 +28,8 @@ enrichBin(
 
 \item{ont}{One of "BP", "MF", and "CC" subontologies, or "ALL" for all three}
 
+\item{universe}{pass to the universe paramenter of enrichGO}
+
 \item{...}{pass to the function enrichGO}
 }
 \value{

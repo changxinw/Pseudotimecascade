@@ -28,6 +28,7 @@ enrichPattern <- function(gene.group, pattern, species="mouse", ont="BP", ...) {
 #' @param stride stride of each step
 #' @param species select from human or mouse
 #' @param ont One of "BP", "MF", and "CC" subontologies, or "ALL" for all three
+#' @param universe pass to the universe paramenter of enrichGO
 #' @param ... pass to the function enrichGO
 #' @return A list with genes and enrichResult instance
 #' @author Zhicheng Ji, Changxin Wan

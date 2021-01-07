@@ -11,6 +11,7 @@ enrichBin(
   stride = 0.1,
   species = "mouse",
   ont = "BP",
+  universe = FALSE,
   ...
 )
 }

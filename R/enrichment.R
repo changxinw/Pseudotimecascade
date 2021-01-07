@@ -34,7 +34,7 @@ enrichPattern <- function(gene.group, pattern, species="mouse", ont="BP", ...) {
 #' @export enrichBin
 #' @import org.Hs.eg.db org.Mm.eg.db
 #' @importFrom clusterProfiler enrichGO
-enrichBin <- function(gene.group, pattern, bin.width=0.2, stride=0.1, species="mouse", ont="BP", ...){
+enrichBin <- function(gene.group, pattern, bin.width=0.2, stride=0.1, species="mouse", ont="BP", universe=FALSE, ...){
   OrgDb <- ifelse(species=="mouse", "org.Mm.eg.db", "org.Hs.eg.db")
   genes <- rownames(gene.group)[which(gene.group$pattern==pattern)]
   res_bin <- list()
@@ -42,13 +42,16 @@ enrichBin <- function(gene.group, pattern, bin.width=0.2, stride=0.1, species="m
   stride <- ifelse(stride<1, as.integer(stride*length(genes)), stride)
   res_enrich <- list()
   pos_start <- 1
+  if (length(universe) == 1) {
+    universe <- genes
+  }
   while (pos_start < length(genes)) {
     pos_end <- pos_start + bin.width - 1
     if(pos_end > length(genes)) {
       pos_end <- length(genes)
       pos_start <- length(genes) - bin.width + 1
     }
-    res_enrich[[paste0(pos_start, "-", pos_end)]] <- enrichGO(gene=genes[pos_start:pos_end], OrgDb=OrgDb, keyType="SYMBOL", ont=ont, universe=genes, ...)
+    res_enrich[[paste0(pos_start, "-", pos_end)]] <- enrichGO(gene=genes[pos_start:pos_end], OrgDb=OrgDb, keyType="SYMBOL", ont=ont, universe=universe, ...)
     pos_start <- pos_start + stride
   }
   return(res_enrich)

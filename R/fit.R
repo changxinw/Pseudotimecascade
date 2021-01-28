@@ -45,9 +45,15 @@ fitData <- function(data, pseudo.time=colnames(data), zero.rate=0.9, p.adjust.me
     scale(fitted(model[[sg]]))
   }))
   ### get p values for each gene
-  pval_data <- lapply(names(model), function(sg) {
-    lrtest(model[[sg]])@Body[2,5]
-  })
+  if (mc.cores > 1){
+    pval_data <- mclapply(names(model), function(sg) {
+      lrtest(model[[sg]])@Body[2,5]
+    }, mc.cores = mc.cores)
+  } else {
+    pval_data <- lapply(names(model), function(sg) {
+      lrtest(model[[sg]])@Body[2,5]
+    })
+  }
   ### p value adjustment method
   qval_data <- p.adjust(unlist(pval_data), method = p.adjust.method)
   ### set cutoff for fdr here

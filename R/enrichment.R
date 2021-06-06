@@ -20,6 +20,28 @@ enrichGroup <- function(gene.group, species="mouse", ont="BP", ...) {
   return(enrich_result)
 }
 
+#' @title enrichPattern
+#' @description Enrichment for genes in specific pattern
+#' @details This function generates an enrichResult instance
+#' @param gene.group a data frame indicate genes in each pattern
+#' @param pattern the pattern for enrichment analysis
+#' @param species select from human or mouse
+#' @param ont One of "BP", "MF", and "CC" subontologies, or "ALL" for all three
+#' @param ... pass to the function enrichGO
+#' @return An enrichResult instance
+#' @author Zhicheng Ji, Changxin Wan
+#' @export enrichPattern
+#' @import org.Hs.eg.db org.Mm.eg.db
+#' @importFrom clusterProfiler enrichGO
+
+enrichPattern <- function(gene.group, pattern, species="mouse", ont="BP", ...) {
+  OrgDb <- ifelse(species=="mouse", "org.Mm.eg.db", "org.Hs.eg.db")
+  genes <- rownames(gene.group)[which(gene.group$pattern==pattern)]
+  enrich_result <- enrichGO(gene=genes, OrgDb=OrgDb, keyType="SYMBOL", ont=ont, ...)
+  return(enrich_result)
+}
+
+
 #' @title compareEnrichBin
 #' @description Enrichment for ordered genes in specific pattern
 #' @details This function generates a list with genes and enrichResult instance

@@ -9,7 +9,7 @@ Description: More about what it does (maybe more than one line)
 Depends:
     R (>= 3.5.0)
 Imports:
-    ComplexHeatmap, VGAM, circlize, dplyr, grDevices, clusterProfiler, org.Hs.eg.db, org.Mm.eg.db, ggplot2
+    ComplexHeatmap, VGAM, circlize, dplyr, grDevices, clusterProfiler, org.Hs.eg.db, org.Mm.eg.db, ggplot2, stats, grid
 Suggests:
     devtools
 License: MIT + file LICENSE

@@ -6,12 +6,11 @@
 \usage{
 fitData(
   data,
+  expr.cut = 0.1,
+  expr.cut.rate = 0.05,
   pseudo.time = colnames(data),
-  zero.rate = 0.9,
   p.adjust.method = "BH",
-  p.cutoff = 0.05,
-  adj.p.cutoff = 0.05,
-  res = ncol(data),
+  new_data = data.frame(pt = seq(1, ncol(data))),
   verbose = TRUE,
   mc.cores = 1
 )
@@ -19,24 +18,22 @@ fitData(
 \arguments{
 \item{data}{a single cell expression matrix with rows as genes and columns as cells.}
 
-\item{pseudo.time}{cells ranked according to pseudo time}
+\item{expr.cut}{cutoff of lowerest expression}
 
-\item{zero.rate}{cutoff of zero rate among cells to filter gene}
+\item{expr.cut.rate}{cutoff of cells lower than lowest expression}
+
+\item{pseudo.time}{cells ranked according to pseudo time}
 
 \item{p.adjust.method}{method for multiple hypothesis test}
 
-\item{p.cutoff}{cutoff for p value}
-
-\item{adj.p.cutoff}{cutoff for adjusted p value}
-
-\item{res}{column number of output fitted matrix}
+\item{new_data}{input matrix for model prediction}
 
 \item{verbose}{show message of running process}
 
 \item{mc.cores}{number of cores for parallel computing}
 }
 \value{
-A scaled gene expression matrix
+A list contains scaled fitted gene expression matrix
 }
 \description{
 Fit single cell gene expression data according to cell pseudotime

@@ -28,7 +28,8 @@ genePattern <- function(data){
 
   zp_direction <- sapply(names(zp), function(gene){
     direction <- lapply(zp[[gene]], function(y){
-      ifelse(data[gene, as.numeric(sub("V", "", y)) - 1] < 0, "I", "D")
+      ### fix the bug when switch point is 1
+      ifelse(data[gene, as.numeric(sub("V", "", y))] < data[gene, as.numeric(sub("V", "", y)) + 1], "I", "D")
     })
     return(paste0(unlist(direction), collapse=""))
   })

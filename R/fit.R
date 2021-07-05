@@ -19,6 +19,7 @@ fitData <- function(data, expr.cut=0.1, expr.cut.rate=0.05, pseudo.time=colnames
   data <- data[, pseudo.time]
   data <- data[rowMeans(data>expr.cut)>expr.cut.rate, ]
   ### output percentage of process
+  pt <- 1:ncol(data)
   if (mc.cores > 1) {
     model <- mclapply(1:nrow(data), function(igene){
       if (igene %% 100 == 0 && verbose){

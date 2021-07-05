@@ -25,7 +25,7 @@ fitData <- function(data, expr.cut=0.1, expr.cut.rate=0.05, pseudo.time=colnames
       if (igene %% 100 == 0 && verbose){
         message(paste0(igene, " genes processed!"))
       }
-      vgam(data[igene, ] ~ s(pt, df=2), family=tobit(Lower=expr.cut, type.fitted = "mean.obs"), control=vgam.control(maxit=50))
+      vgam(data[igene, ] ~ s(pt, df=2), family=tobit(Lower=0.1, type.fitted = "mean.obs"), control=vgam.control(maxit=50))
     }, mc.cores=mc.cores)
   }
   else {
@@ -33,7 +33,7 @@ fitData <- function(data, expr.cut=0.1, expr.cut.rate=0.05, pseudo.time=colnames
       if (igene %% 100 == 0 && verbose){
         message(paste0(igene, " genes processed!"))
       }
-      vgam(data[igene, ] ~ s(pt, df=2), family=tobit(Lower=expr.cut, type.fitted = "mean.obs"), control=vgam.control(maxit=50))
+      vgam(data[igene, ] ~ s(pt, df=2), family=tobit(Lower=0.1, type.fitted = "mean.obs"), control=vgam.control(maxit=50))
     })
   }
   names(model) <- row.names(data)

@@ -64,7 +64,7 @@ MSHeatmapSTIP <- function(x, gl, annotation, interval, ...){
                         tmp_index <- na.omit(unlist(tmp_interval[m, ], use.names=FALSE))
                         if (length(tmp_index) != 0){
                             pindex <- c(pindex, ind_mat[m, tmp_index])
-                            start <- round(mean(tmp_index) + (qnorm(0.025)*sd(tmp_index)/sqrt(length(tmp_index))))
+                            start <- max(1, round(mean(tmp_index) + (qnorm(0.025)*sd(tmp_index)/sqrt(length(tmp_index)))))
                             sindex_s <- c(sindex_s, ind_mat[m, start])
                             end <- round(mean(tmp_index) + (qnorm(0.975)*sd(tmp_index)/sqrt(length(tmp_index))))
                             sindex_e <- c(sindex_e, ind_mat[m, end])

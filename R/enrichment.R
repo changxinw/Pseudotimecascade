@@ -89,7 +89,7 @@ compareEnrichBin <- function(gene.group, pattern, bin.width=0.2, stride=0.1, spe
     pos_start <- pos_start + stride
   }
   names(gene_list) <- unlist(gene_pos)
-  genes_bin_enrich <- compareCluster(gene_list, fun = "enrichGO", OrgDb = OrgDb, universe=universe, keyType = "SYMBOL", ont="BP", pvalueCutoff = 1, qvalueCutoff = 1)
+  genes_bin_enrich <- compareCluster(gene_list, fun = "enrichGO", OrgDb = OrgDb, universe=universe, keyType = "SYMBOL", ont="BP", pvalueCutoff = 1, qvalueCutoff = 1, ...)
   genes_bin_enrich@compareClusterResult[, "Cluster"] <- factor(genes_bin_enrich@compareClusterResult[, "Cluster"], levels=unlist(gene_pos))
   return(genes_bin_enrich)
 }

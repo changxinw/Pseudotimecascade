@@ -15,11 +15,11 @@
 #' @import VGAM parallel
 #' @importFrom stats p.adjust
 
-fitData <- function(data, expr.cut=0.1, expr.cut.rate=0.05, pseudo.time=colnames(data), p.adjust.method="BH", new_data=data.frame(pt=seq(1, ncol(data))), verbose=TRUE, mc.cores=1){
+fitData <- function(data, pt=1:ncol(data), expr.cut=0.1, expr.cut.rate=0.05, pseudo.time=colnames(data), p.adjust.method="BH", new_data=data.frame(pt=seq(1, ncol(data))), verbose=TRUE, mc.cores=1){
   data <- data[, pseudo.time]
   data <- data[rowMeans(data>expr.cut)>expr.cut.rate, ]
   ### output percentage of process
-  pt <- 1:ncol(data)
+#   pt <- 1:ncol(data)
   if (mc.cores > 1) {
     model <- mclapply(1:nrow(data), function(igene){
       if (igene %% 100 == 0 && verbose){

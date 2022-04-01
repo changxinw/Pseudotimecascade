@@ -14,9 +14,9 @@ STIP: State Transition Inference Prediction
 
 ```{r }
 if (!require("BiocManager", quietly = TRUE))
-    install.packages("BiocManager", "clusterProfiler")
+    install.packages("BiocManager")
 
-BiocManager::install(c("ComplexHeatmap", ""))
+BiocManager::install(c("ComplexHeatmap", "clusterProfiler"))
 
 install.packages(c("VGAM", "circlize", "dplyr", "ggplot2"))
 

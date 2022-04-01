@@ -7,23 +7,23 @@ STIP: State Transition Inference Prediction
 - VGAM
 - circlize
 - dplyr
-- grDevices
+- ggplot2
+- clusterProfiler
 
 ### Installation
+
 ```{r }
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager", "clusterProfiler")
+
+BiocManager::install(c("ComplexHeatmap", ""))
+
+install.packages(c("VGAM", "circlize", "dplyr", "ggplot2"))
+
 if (!require("devtools"))
   install.packages("devtools")
 devtools::install_github("changxinw/STIP")
 ```
 
 ### Example
-``` {r}
-library(STIP)
-data(tcell)
-fit_data <- fitData(tcell)
-gl = c("Rrp15", "Celf2", "Pcmtd1", "Plxdc2")
-p <- PreprocessSTIP(fit_data, gl)
-pdf("STIP_example_package.pdf", width = 7, height=10)
-ComplexHeatmap::draw(p)
-dev.off()
-```
+Please refer to example folder for a Seurat example.

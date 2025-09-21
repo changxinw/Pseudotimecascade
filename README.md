@@ -1,5 +1,5 @@
-# STIP
-Pseudotimecascade visualizes gene expression cascade in pseudotime analysis
+# Pseudotimecascade
+Visualizes gene expression cascade in pseudotime analysis
 
 ### Depends
 - R (>= 3.5.0)

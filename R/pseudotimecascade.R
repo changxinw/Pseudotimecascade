@@ -1,16 +1,16 @@
-#' @title PreprocessSTIP
-#' @description State Transition Inference Prediction Preprocess
-#' @details This function generates a table that performs (STIP) State Transition Inference Prediction
-#' @param data a single cell expression matrix or data.frame with rows as genes and columns as cells. Cells should follow the order of pseudo time
-#' @param gl marked gene list
-#' @return A Heatmap-class object
-#' @export PreprocessSTIP
-PreprocessSTIP <- function(data, gl){
-  gene_group <- genePattern(data)
-  plotdata <- data[rownames(gene_group), ]
-  p <- HeatmapSTIP(plotdata, gl, as.matrix(gene_group)[, "pattern"])
-  return(p)
-}
+#' #' @title PreprocessSTIP
+#' #' @description State Transition Inference Prediction Preprocess
+#' #' @details This function generates a table that performs (STIP) State Transition Inference Prediction
+#' #' @param data a single cell expression matrix or data.frame with rows as genes and columns as cells. Cells should follow the order of pseudo time
+#' #' @param gl marked gene list
+#' #' @return A Heatmap-class object
+#' #' @export PreprocessSTIP
+#' PreprocessSTIP <- function(data, gl){
+#'   gene_group <- genePattern(data)
+#'   plotdata <- data[rownames(gene_group), ]
+#'   p <- HeatmapSTIP(plotdata, gl, as.matrix(gene_group)[, "pattern"])
+#'   return(p)
+#' }
 
 #' @title genePattern
 #' @description State transition pattern of each gene
@@ -18,7 +18,7 @@ PreprocessSTIP <- function(data, gl){
 #' @param data a single cell expression matrix or data.frame with rows as genes and columns as cells. Cells should follow the order of pseudo time
 #' @return A dataframe of state transtion pattern
 #' @export genePattern
-#' @author Zhicheng Ji, Changxin Wan
+#' @author Zhicheng Ji, Changxin Wan, Beijie Ji
 genePattern <- function(data){
   ### separation based on zero points
   ### find the number of switch point, only specify the name of mono

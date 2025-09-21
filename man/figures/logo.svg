@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="42.1 9 88.8 102">
+  <!-- Standard hex dimensions: 4.39cm (173px) width x 5.08cm (200px) height -->
+  <defs>
+    <linearGradient id="hexGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2c3e50;stop-opacity:1"/>
+      <stop offset="50%" style="stop-color:#34495e;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#455a64;stop-opacity:1"/>
+    </linearGradient>
+    
+    <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#ff6b6b;stop-opacity:0.9"/>
+      <stop offset="25%" style="stop-color:#4ecdc4;stop-opacity:0.9"/>
+      <stop offset="50%" style="stop-color:#45b7d1;stop-opacity:0.9"/>
+      <stop offset="75%" style="stop-color:#96ceb4;stop-opacity:0.9"/>
+      <stop offset="100%" style="stop-color:#ffeaa7;stop-opacity:0.9"/>
+    </linearGradient>
+    
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Standard hexagon shape: vertex at top/bottom, flat vertical sides -->
+  <polygon points="86.5,10 129.9,35 129.9,85 86.5,110 43.1,85 43.1,35" fill="url(#hexGradient)" stroke="#95a5a6" stroke-width="2"/>
+  
+  <!-- Main cascade waves centered inside hexagon -->
+  <g transform="translate(86.5, 80)">
+    <!-- Time axis arrow - centered and shorter -->
+    <path d="M-30 0 L30 0" stroke="#ddd" stroke-width="2" marker-end="url(#arrowhead)"/>
+    
+    <!-- Cascade waves representing pseudotime progression - aligned with axis width -->
+    <path d="M-30 -5 Q-15 -15, 0 -10 Q15 -5, 30 -15" stroke="url(#waveGradient)" stroke-width="3" fill="none" filter="url(#glow)"/>
+    
+    <path d="M-30 -10 Q-15 -20, 0 -15 Q15 -10, 30 -20" stroke="url(#waveGradient)" stroke-width="2" fill="none" opacity="0.8"/>
+    
+    <path d="M-30 5 Q-15 10, 0 5 Q15 0, 30 5" stroke="url(#waveGradient)" stroke-width="2" fill="none" opacity="0.6"/>
+    
+    <!-- Dots representing cells at different stages - aligned with axis -->
+    <circle cx="-25" cy="-5" r="2" fill="#ff6b6b"/>
+    <circle cx="-10" cy="-12" r="2" fill="#4ecdc4"/>
+    <circle cx="5" cy="-10" r="2" fill="#45b7d1"/>
+    <circle cx="20" cy="-15" r="2" fill="#96ceb4"/>
+    
+    <!-- Additional smaller dots for cascade effect -->
+    <circle cx="-20" cy="-8" r="1" fill="#ff6b6b" opacity="0.7"/>
+    <circle cx="-5" cy="-15" r="1" fill="#4ecdc4" opacity="0.7"/>
+    <circle cx="10" cy="-12" r="1" fill="#45b7d1" opacity="0.7"/>
+  </g>
+  
+  <!-- Arrow marker definition -->
+  <defs>
+    <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#ddd"/>
+    </marker>
+  </defs>
+  
+  <!-- Package name centered above the axis line -->
+  <text x="86.5" y="55" text-anchor="middle" fill="#ecf0f1" font-family="Arial, sans-serif" font-size="8" font-weight="bold">
+    pseudotimecascade
+  </text>
+</svg>

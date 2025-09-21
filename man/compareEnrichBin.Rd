@@ -42,5 +42,5 @@ Enrichment for ordered genes in specific pattern
 This function generates a list with genes and enrichResult instance
 }
 \author{
-Zhicheng Ji, Changxin Wan
+Zhicheng Ji, Changxin Wan, Beijie Ji
 }

@@ -1,6 +1,4 @@
-# STIP
-STIP: State Transition Inference Prediction
-
+# Pseudotimecascade <img src="man/figures/logo.svg" align="right" height="120" alt="logo" />
 ### Depends
 - R (>= 3.5.0)
 - ComplexHeatmap 

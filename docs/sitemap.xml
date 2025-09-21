@@ -1,0 +1,20 @@
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/LICENSE-text.html</loc></url>
+<url><loc>/articles/Pseudotimecascade_tutorial.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/reference/HeatmapSTIP.html</loc></url>
+<url><loc>/reference/MSHeatmapSTIP.html</loc></url>
+<url><loc>/reference/PreprocessSTIP.html</loc></url>
+<url><loc>/reference/ScatterPlotSTIP.html</loc></url>
+<url><loc>/reference/compareEnrichBin.html</loc></url>
+<url><loc>/reference/enrichGroup.html</loc></url>
+<url><loc>/reference/enrichPattern.html</loc></url>
+<url><loc>/reference/fitData.html</loc></url>
+<url><loc>/reference/genePattern.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/tcell.html</loc></url>
+</urlset>
+

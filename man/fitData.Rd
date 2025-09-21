@@ -6,6 +6,7 @@
 \usage{
 fitData(
   data,
+  pt = 1:ncol(data),
   expr.cut = 0.1,
   expr.cut.rate = 0.05,
   pseudo.time = colnames(data),
@@ -42,5 +43,5 @@ Fit single cell gene expression data according to cell pseudotime
 This function generates a fitted expression matrix of single cell RNA-seq
 }
 \author{
-Zhicheng Ji, Changxin Wan
+Zhicheng Ji, Changxin Wan, Beijie Ji
 }

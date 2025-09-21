@@ -1,0 +1,33 @@
+home:
+  title: Pseudotimecascade
+  logo: man/figures/logo.png
+
+navbar:
+  structure:
+    left: [intro, reference, tutorial, news]
+    right: [search, github]
+  components:
+    tutorial:
+      text: Tutorial
+      href: articles/Pseudotimecascade_tutorial.html
+
+template:
+  bootstrap: 5
+  bslib:
+    navbar-brand-font-size: 1rem
+  includes:
+    in_header: |
+      <style>
+      .navbar-brand img {
+        max-width: 32px !important;
+        max-height: 32px !important;
+        width: 32px !important;
+        height: auto !important;
+      }
+      .template-home .contents img[src*="logo"] {
+        max-width: 500px !important;
+        max-height: 500px !important;
+        width: 500px !important;
+        height: auto !important;
+      }
+      </style>

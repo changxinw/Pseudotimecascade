@@ -1,5 +1,5 @@
 # STIP
-STIP: State Transition Inference Prediction
+Pseudotimecascade visualizes gene expression cascade in pseudotime analysis
 
 ### Depends
 - R (>= 3.5.0)

@@ -41,7 +41,6 @@ library(Seurat)
 obj_all <- readRDS("obj.rds")  # <- Replace with your own object
 ```
 
-### =====Do we need this part?
 We subset clusters corresponding to Common Myeloid Progenitors (e.g., cluster 15 and 19).
 
 ```{r subset-clusters, eval=FALSE}
@@ -50,7 +49,6 @@ obj <- subset(obj_all, seurat_clusters %in% clusters)
 obj@meta.data[obj@meta.data$seurat_clusters == 15, "seurat_clusters"] <- 1
 obj@meta.data[obj@meta.data$seurat_clusters == 19, "seurat_clusters"] <- 2
 ```
-### =============
 
 ## Step 2: Compute pseudotime (flexible choice)
 
@@ -245,9 +243,10 @@ After identifying gene patterns using `Pseudotimecascade`, we visualize enriched
 
 ### 7.1: Group-Based Enrichment Visualization
 
-Group enrichment analyzes the overrepresentation of GO terms among genes from a specific pattern (e.g., `"I"`, `"D"`, `"ID"`, etc.). The clusterProfiler::dotplot()(((do we need to mentione this? since it is from others's package)))) function is used to visualize enriched GO terms.
+Group enrichment analyzes the overrepresentation of GO terms among genes from a specific pattern (e.g., `"I"`, `"D"`, `"ID"`, etc.). The clusterProfiler::dotplot() function is used to visualize enriched GO terms.
 
 We provide two common options:
+
 - **Manual selection**: Use a predefined list of biologically relevant GO terms.
 - **Automatic ranking**: Select the top *N* enriched terms by q-value.
 
@@ -295,7 +294,7 @@ Tip: Manual selection is preferred when you want to highlight specific biologica
 For general exploration, automatic ranking by q-value is a useful alternative.
 
 
-### Step 7.2: Bin-Based Enrichment Visualization
+### 7.2: Bin-Based Enrichment Visualization
 
 Besides pattern-wise group enrichment, `Pseudotimecascade` supports bin-based enrichment, which evaluates how GO terms are enriched along pseudotime bins within each pattern.
 

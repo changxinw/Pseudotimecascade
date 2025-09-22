@@ -18,36 +18,17 @@
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Page not found (404)">
 <meta property="og:image" content="/logo.svg">
 <style>
-.navbar-brand::before {
-  content: "";
-  background: url("man/figures/logo.png") no-repeat center;
-  background-size: contain;
-  width: 32px;
-  height: 32px;
-  display: inline-block;
-  margin-right: 10px;
-  vertical-align: middle;
+.navbar-brand img {
+  max-width: 32px !important;
+  max-height: 32px !important;
+  width: 32px !important;
+  height: auto !important;
 }
-
-.navbar-brand {
-  display: flex;
-  align-items: center;
-}
-
-.template-home h1:first-of-type::before {
-  content: "";
-  background: url("man/figures/logo.png") no-repeat center;
-  background-size: contain;
-  width: 48px;
-  height: 48px;
-  display: inline-block;
-  margin-right: 15px;
-  vertical-align: middle;
-}
-
-.template-home h1:first-of-type {
-  display: flex;
-  align-items: center;
+.template-home .contents img[src*="logo"] {
+  max-width: 500px !important;
+  max-height: 500px !important;
+  width: 500px !important;
+  height: auto !important;
 }
 </style>
 </head>

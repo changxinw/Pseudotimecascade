@@ -24,7 +24,7 @@ install.packages(c("VGAM", "circlize", "dplyr", "ggplot2"))
 
 if (!require("devtools"))
   install.packages("devtools")
-devtools::install_github("changxinw/STIP")
+devtools::install_github("changxinw/Pseudotimecascade")
 ```
 
 ### Example

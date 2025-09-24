@@ -1,4 +1,7 @@
 # Pseudotimecascade <img src="man/figures/logo.svg" align="right" height="120" alt="logo" />
+
+Visualizes gene expression cascade in pseudotime analysis
+
 ### Depends
 - R (>= 3.5.0)
 - ComplexHeatmap 
@@ -22,7 +25,7 @@ install.packages(c("VGAM", "circlize", "dplyr", "ggplot2"))
 
 if (!require("devtools"))
   install.packages("devtools")
-devtools::install_github("changxinw/STIP")
+devtools::install_github("changxinw/Pseudotimecascade")
 ```
 
 ### Example

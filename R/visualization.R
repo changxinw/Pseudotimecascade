@@ -19,8 +19,8 @@ HeatmapSTIP <- function(x, gl, annotation, ...){
   myBreaks <- c(seq(min(x), 0, length.out=paletteLength/2), seq(max(x)/paletteLength, max(x), length.out=paletteLength/2))
   col = circlize::colorRamp2(myBreaks, myColor)
   gl <- intersect(rownames(x), gl)
-  gene_labels = ComplexHeatmap::rowAnnotation(Genes = ComplexHeatmap::anno_mark(at=which(rownames(x) %in% gl), labels=gl))
-  gene_annot = ComplexHeatmap::rowAnnotation(Genes = annotation[rownames(x)], col=list(Genes = c(I="#d73027", ID="#f46d43", IDI="#fdae61", IDID="#fee090", D="#4575b4", DI="#74add1", DID="#abd9e9", DIDI="#e0f3f8")))
+  gene_labels = ComplexHeatmap::rowAnnotation(Pattern = ComplexHeatmap::anno_mark(at=which(rownames(x) %in% gl), labels=gl))
+  gene_annot = ComplexHeatmap::rowAnnotation(pattern = annotation[rownames(x)], col=list(pattern = c(I="#d73027", ID="#f46d43", IDI="#fdae61", IDID="#fee090", D="#4575b4", DI="#74add1", DID="#abd9e9", DIDI="#e0f3f8")))
   p = ComplexHeatmap::Heatmap(x, col=col, name="Expression", cluster_rows = FALSE, cluster_columns = F, right_annotation = gene_labels, show_row_names=F, show_column_names = F, left_annotation = gene_annot, ...)
   return(p)
 }
@@ -50,8 +50,8 @@ MSHeatmapSTIP <- function(x, gl, annotation, interval, ...){
   myBreaks <- c(seq(min(x), 0, length.out=paletteLength/2), seq(max(x)/paletteLength, max(x), length.out=paletteLength/2))
   col = circlize::colorRamp2(myBreaks, myColor)
   gl <- intersect(rownames(x), gl)
-  gene_labels <- ComplexHeatmap::rowAnnotation(Genes = ComplexHeatmap::anno_mark(at=which(rownames(x) %in% gl), labels=gl))
-  gene_annot <- ComplexHeatmap::rowAnnotation(Genes = annotation[rownames(x)], col=list(Genes = c(I="#d73027", ID="#f46d43", IDI="#fdae61", IDID="#fee090", D="#4575b4", DI="#74add1", DID="#abd9e9", DIDI="#e0f3f8")))
+  gene_labels <- ComplexHeatmap::rowAnnotation(Pattern = ComplexHeatmap::anno_mark(at=which(rownames(x) %in% gl), labels=gl))
+  gene_annot <- ComplexHeatmap::rowAnnotation(pattern = annotation[rownames(x)], col=list(pattern = c(I="#d73027", ID="#f46d43", IDI="#fdae61", IDID="#fee090", D="#4575b4", DI="#74add1", DID="#abd9e9", DIDI="#e0f3f8")))
   p <- ComplexHeatmap::Heatmap(x, col=col, name="Expression", cluster_rows = FALSE, cluster_columns = FALSE, show_row_names=FALSE, show_column_names = FALSE,
                                right_annotation = gene_labels, left_annotation = gene_annot,
                                layer_fun = function(j, i, x, y, w, h, fill){
@@ -72,7 +72,7 @@ MSHeatmapSTIP <- function(x, gl, annotation, interval, ...){
                                      }
                                    }
                                  }
-                                 grid::grid.points(x[pindex], y[pindex], pch = 16, gp = grid::gpar(col = "black", alpha=0.5), size = grid::unit(2, "mm"))
+                                 grid::grid.points(x[pindex], y[pindex], pch = 16, gp = grid::gpar(col = "black", alpha=0.2), size = grid::unit(0.5, "mm"))
                                  grid::grid.segments(x[sindex_s], y[sindex_s], x[sindex_e], y[sindex_e], gp = grid::gpar(col = "black", lwd = 0.5, alpha=0.5))}, ...)
   return(p)
 }

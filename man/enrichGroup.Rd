@@ -25,5 +25,5 @@ Enrichment for genes in specific pattern
 This function generates an enrichResult instance
 }
 \author{
-Zhicheng Ji, Changxin Wan
+Zhicheng Ji, Changxin Wan, Beijie Ji
 }

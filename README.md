@@ -1,4 +1,5 @@
-# Pseudotimecascade
+# Pseudotimecascade <img src="man/figures/logo.svg" align="right" height="120" alt="logo" />
+
 Visualizes gene expression cascade in pseudotime analysis
 
 ### Depends

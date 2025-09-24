@@ -1,18 +1,32 @@
-Package: STIP
+Package: Pseudotimecascade
 Type: Package
-Title: State Transition Inference Prediction
+Title: Pseudotimecascade visualizes gene expression cascade in pseudotime analysis
 Version: 0.1.0
-Author: Zhicheng Ji, Changxin Wan
-Maintainer: Changxin Wan <changxin.wan@duke.edu>
+Author: Zhicheng Ji, Changxin Wan, Beijie Ji
+Maintainer: Changxin Wan <changxin.wan@duke.edu>, Beijie Ji <beijie.ji@duke.edu>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
 Depends:
     R (>= 3.5.0)
 Imports:
-    ComplexHeatmap, VGAM, circlize, dplyr, grDevices, clusterProfiler, org.Hs.eg.db, org.Mm.eg.db, ggplot2, stats, grid
+    ComplexHeatmap,
+    VGAM,
+    circlize,
+    dplyr,
+    grDevices,
+    clusterProfiler,
+    org.Hs.eg.db,
+    org.Mm.eg.db,
+    ggplot2,
+    stats,
+    grid,
+    parallel
 Suggests:
-    devtools
+    devtools,
+    knitr,
+    rmarkdown
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: false
-RoxygenNote: 7.1.1
+RoxygenNote: 7.3.3
+VignetteBuilder: knitr

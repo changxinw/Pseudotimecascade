@@ -25,5 +25,5 @@ Generate heatmap for STIP result
 Input a gene expression matrix and annotation matrixes, output a heatmap
 }
 \author{
-Zhicheng Ji, Changxin Wan
+Zhicheng Ji, Changxin Wan, Beijie Ji
 }

@@ -2,7 +2,7 @@ Package: Pseudotimecascade
 Type: Package
 Title: Pseudotimecascade visualizes gene expression cascade in pseudotime analysis
 Version: 0.1.0
-Author: Zhicheng Ji, Changxin Wan, Beijie Ji
+Author:  Changxin Wan, Beijie Ji, Zhicheng Ji
 Maintainer: Changxin Wan <changxin.wan@duke.edu>, Beijie Ji <beijie.ji@duke.edu>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.

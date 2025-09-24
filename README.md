@@ -15,7 +15,7 @@ Visualizes gene expression cascade in pseudotime analysis
 
 ### Installation
 
-```{r }
+```r
 if (!require("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 

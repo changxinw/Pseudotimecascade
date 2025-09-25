@@ -16,20 +16,6 @@
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Get started with Pseudotimecascade">
-<style>
-.navbar-brand img {
-  max-width: 32px !important;
-  max-height: 32px !important;
-  width: 32px !important;
-  height: auto !important;
-}
-.template-home .contents img[src*="logo"] {
-  max-width: 500px !important;
-  max-height: 500px !important;
-  width: 500px !important;
-  height: auto !important;
-}
-</style>
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -49,7 +35,12 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
-<li class="active nav-item"><a class="nav-link" href="../articles/Pseudotimecascade_tutorial.html">Tutorial</a></li>
+<li class="active nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/Pseudotimecascade_tutorial.html">Get started with Pseudotimecascade</a></li>
+  </ul>
+</li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -87,13 +78,13 @@ identifies genes with switch-like temporal expression patterns and
 supports downstream biological interpretation through GO enrichment
 analysis.</p>
 <p>We demonstrate the complete workflow starting from a Seurat object
-with clustering and dimensionality reduction. The key steps include: •
-Computing pseudotime using <code>TSCAN</code> or other tools • Fitting
-gene trajectories with <code><a href="../reference/fitData.html">fitData()</a></code> • Classifying gene
-patterns with <code><a href="../reference/genePattern.html">genePattern()</a></code> • Visualizing dynamic genes
-with heatmaps • Performing enrichment analysis (group-based and
-bin-based) • Integrating multi-sample results to assess
-reproducibility</p>
+with clustering and dimensionality reduction. The key steps include: -
+Computing pseudotime using <code>TSCAN</code> or other tools<br>
+- Fitting gene trajectories with <code><a href="../reference/fitData.html">fitData()</a></code><br>
+- Classifying gene patterns with <code><a href="../reference/genePattern.html">genePattern()</a></code><br>
+- Visualizing dynamic genes with heatmaps<br>
+- Performing enrichment analysis (group-based and bin-based)<br>
+- Integrating multi-sample results to assess reproducibility</p>
 <p>The pipeline is modular and compatible with any pseudotime method, as
 long as cells are assigned a numeric pseudotime value. While we
 illustrate the process using <code>TSCAN</code> and specific marker
@@ -144,7 +135,9 @@ trajectories, estimated switch points, and statistical metrics that form
 the basis for downstream pattern classification and enrichment
 analysis.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Ensure cells are ordered by pseudotime</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://changxinw.github.io/Pseudotimecascade/">Pseudotimecascade</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Ensure cells are ordered by pseudotime</span></span>
 <span><span class="va">cells_order</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">obj</span><span class="op">@</span><span class="va">meta.data</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">obj</span><span class="op">$</span><span class="va">tscan_pseudotime</span><span class="op">)</span>, <span class="op">]</span><span class="op">)</span></span>
 <span><span class="va">expr_df</span> <span class="op">&lt;-</span> <span class="va">obj</span><span class="op">@</span><span class="va">assays</span><span class="op">$</span><span class="va">RNA</span><span class="op">@</span><span class="va">data</span><span class="op">[</span>, <span class="va">cells_order</span><span class="op">]</span></span>
 <span></span>
@@ -176,12 +169,12 @@ estimated switch point (if applicable), and a ranking statistic for
 visualization.</p>
 <p>In this tutorial, we store the fitted expression matrix, the list of
 fit results, and the gene-level pattern assignments together in a single
-object (<code>stip_list</code>), which will serve as the input for
+object (<code>pseudo_list</code>), which will serve as the input for
 downstream heatmaps and enrichment analyses.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gene_group</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/genePattern.html">genePattern</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">fit_data_list</span><span class="op">[[</span><span class="st">"data"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">stip_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span><span class="va">pseudo_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>  expr_df <span class="op">=</span> <span class="va">expr_df</span>,</span>
 <span>  fit_data <span class="op">=</span> <span class="va">fit_data_list</span>,</span>
 <span>  gene_group <span class="op">=</span> <span class="va">gene_group</span></span>
@@ -201,15 +194,15 @@ manually chosen marker genes relevant for hematopoietic differentiation.
 These marker genes are annotated on the heatmap, making it easier to
 track known regulators and to interpret the overall expression trends in
 a biological context.</p>
-<p>The function <code><a href="../reference/HeatmapSTIP.html">HeatmapSTIP()</a></code> automatically orders genes by
-their assigned expression pattern and estimated switch point location,
-and produces a heatmap where each row is a gene and each column a
-pseudotime-sampled cell. This view provides a compact summary of dynamic
-gene expression programs along the trajectory.</p>
+<p>The function <code><a href="../reference/PseudotimeHeatmap.html">PseudotimeHeatmap()</a></code> automatically orders
+genes by their assigned expression pattern and estimated switch point
+location, and produces a heatmap where each row is a gene and each
+column a pseudotime-sampled cell. This view provides a compact summary
+of dynamic gene expression programs along the trajectory.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">Pseudotimecascade</span><span class="op">)</span></span>
-<span><span class="va">stip_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"stip_list.rds"</span>, package <span class="op">=</span> <span class="st">"Pseudotimecascade"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://changxinw.github.io/Pseudotimecascade/">Pseudotimecascade</a></span><span class="op">)</span></span>
+<span><span class="va">pseudo_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"pseudo_list.rds"</span>, package <span class="op">=</span> <span class="st">"Pseudotimecascade"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Match and sort gene pattern labels</span></span>
@@ -221,10 +214,10 @@ gene expression programs along the trajectory.</p>
 <span><span class="va">marked_genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">hsc_genes</span>, <span class="va">cmp_genes</span>, <span class="va">ery_genes</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot heatmap</span></span>
-<span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/HeatmapSTIP.html">HeatmapSTIP</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">stip_list</span><span class="op">$</span><span class="va">fit_data</span>, </span>
+<span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/PseudotimeHeatmap.html">PseudotimeHeatmap</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">pseudo_list</span><span class="op">$</span><span class="va">fit_data</span>, </span>
 <span>                 gl <span class="op">=</span> <span class="va">marked_genes</span>, </span>
-<span>                 annotation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">stip_list</span><span class="op">$</span><span class="va">gene_group</span><span class="op">)</span><span class="op">[</span>, <span class="st">"pattern"</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="fu">ComplexHeatmap</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html" class="external-link">draw</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span></span></code></pre></div>
+<span>                 annotation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">pseudo_list</span><span class="op">$</span><span class="va">gene_group</span><span class="op">)</span><span class="op">[</span>, <span class="st">"pattern"</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">p</span></span></code></pre></div>
 <p><img src="Pseudotimecascade_tutorial_files/figure-html/heatmap-1.png" width="576"></p>
 </div>
 <div class="section level2">
@@ -246,41 +239,33 @@ out using the <code><a href="../reference/enrichPattern.html">enrichPattern()</a
 specifically designed for temporal gene expression analysis. Given a
 gene grouping table produced by <code><a href="../reference/genePattern.html">genePattern()</a></code>, users can
 call <code><a href="../reference/enrichPattern.html">enrichPattern()</a></code> to test for functional
-overrepresentation within one specific pattern of interest (e.g., “I” or
-“D”).</p>
+overrepresentation within one specific pattern (e.g., “I” or “D”) or
+across all patterns at once.</p>
 <p>This function automatically extracts the genes belonging to the
 chosen pattern and performs GO enrichment against a user-defined
 background (the <code>universe</code>). In practice, the universe is set
 to all genes detected in the dataset after preprocessing, ensuring that
 enrichment is interpreted relative to the expressed gene set. This
-analysis links temporal gene expression patterns to biological
-processes, highlighting which functions are enriched among dynamically
-regulated genes.</p>
+analysis links temporal gene expression dynamics to biological
+processes, highlighting enriched functions associated with distinct
+pseudotime patterns.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">Pseudotimecascade</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://yulab-smu.top/contribution-knowledge-mining/" class="external-link">clusterProfiler</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Order gene pattern labels</span></span>
-<span><span class="va">ggene_group</span> <span class="op">&lt;-</span> <span class="va">stip_list</span><span class="op">[[</span><span class="st">"gene_group"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">stip_list</span><span class="op">[[</span><span class="st">"fit_data"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"data"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>, <span class="op">]</span></span>
+<span><span class="va">ggene_group</span> <span class="op">&lt;-</span> <span class="va">pseudo_list</span><span class="op">[[</span><span class="st">"gene_group"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">pseudo_list</span><span class="op">[[</span><span class="st">"fit_data"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"data"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>, <span class="op">]</span></span>
 <span><span class="va">gene_group</span> <span class="op">&lt;-</span> <span class="va">gene_group</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">gene_group</span><span class="op">$</span><span class="va">pattern</span>, <span class="va">gene_group</span><span class="op">$</span><span class="va">rank_point</span><span class="op">)</span>, <span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Perform GO enrichment for each pattern</span></span>
-<span><span class="va">enrich_group_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="kw">for</span> <span class="op">(</span><span class="va">gp</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">gene_group</span><span class="op">$</span><span class="va">pattern</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">enrich_group</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/enrichPattern.html">enrichPattern</a></span><span class="op">(</span><span class="va">gene_group</span>, <span class="va">gp</span>, <span class="st">"human"</span>, universe <span class="op">=</span> <span class="va">universe</span><span class="op">)</span></span>
-<span>  </span>
-<span>  <span class="co"># Compute enrichment ratio</span></span>
-<span>  <span class="va">enrich_group</span><span class="op">@</span><span class="va">result</span><span class="op">$</span><span class="va">EnrichRatio</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">enrich_group</span><span class="op">@</span><span class="va">result</span>, <span class="op">{</span></span>
-<span>    <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"/.*"</span>, <span class="st">""</span>, <span class="va">GeneRatio</span><span class="op">)</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">".*/"</span>, <span class="st">""</span>, <span class="va">BgRatio</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span></span>
-<span>    <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">".*/"</span>, <span class="st">""</span>, <span class="va">GeneRatio</span><span class="op">)</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"/.*"</span>, <span class="st">""</span>, <span class="va">BgRatio</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="op">}</span><span class="op">)</span></span>
-<span>  </span>
-<span>  <span class="va">enrich_group_list</span><span class="op">[[</span><span class="va">gp</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">enrich_group</span></span>
-<span><span class="op">}</span></span>
+<span><span class="va">enrich_group_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/enrichPattern.html">enrichPattern</a></span><span class="op">(</span></span>
+<span>  gene.group <span class="op">=</span> <span class="va">gene_group</span>,</span>
+<span>  species <span class="op">=</span> <span class="st">"human"</span>,</span>
+<span>  universe <span class="op">=</span> <span class="va">universe</span>,</span>
+<span>  ont <span class="op">=</span> <span class="st">"BP"</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Save results</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">saveRDS</a></span><span class="op">(</span><span class="va">enrich_group_list</span>, <span class="st">"STIP_group_enrichment.rds"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">saveRDS</a></span><span class="op">(</span><span class="va">enrich_group_list</span>, <span class="st">"pseudo_group_enrichment.rds"</span><span class="op">)</span></span></code></pre></div>
 <p>Tip: You may later visualize these results as shown in Step 6.1.</p>
 </div>
 <div class="section level3">
@@ -304,6 +289,7 @@ points in the trajectory.</p>
 <span><span class="va">bin.width</span> <span class="op">&lt;-</span> <span class="fl">0.2</span></span>
 <span><span class="va">stride</span> <span class="op">&lt;-</span> <span class="fl">0.1</span></span>
 <span></span>
+<span><span class="co"># Run bin-based enrichment</span></span>
 <span><span class="va">genes_bin_enrich</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compareEnrichBin.html">compareEnrichBin</a></span><span class="op">(</span></span>
 <span>  <span class="va">gene_group</span>,</span>
 <span>  pattern <span class="op">=</span> <span class="va">pattern</span>,</span>
@@ -314,18 +300,12 @@ points in the trajectory.</p>
 <span>  universe <span class="op">=</span> <span class="va">universe</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Compute enrichment ratio</span></span>
-<span><span class="va">genes_bin_enrich</span><span class="op">@</span><span class="va">compareClusterResult</span><span class="op">$</span><span class="va">EnrichRatio</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">genes_bin_enrich</span><span class="op">@</span><span class="va">compareClusterResult</span>, <span class="op">{</span></span>
-<span>  <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"/.*"</span>, <span class="st">""</span>, <span class="va">GeneRatio</span><span class="op">)</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">".*/"</span>, <span class="st">""</span>, <span class="va">BgRatio</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span></span>
-<span>  <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">".*/"</span>, <span class="st">""</span>, <span class="va">GeneRatio</span><span class="op">)</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"/.*"</span>, <span class="st">""</span>, <span class="va">BgRatio</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">}</span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># Save results</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">saveRDS</a></span><span class="op">(</span><span class="va">genes_bin_enrich</span>, <span class="st">"STIP_bin_enrichment.rds"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">saveRDS</a></span><span class="op">(</span><span class="va">genes_bin_enrich</span>, <span class="st">"pseudo_bin_enrichment.rds"</span><span class="op">)</span></span></code></pre></div>
 <p>Tip: While we demonstrate bin-based enrichment using the
 <code>"I"</code> pattern here, the full analysis can be performed across
-all expression patterns. Visualization of bin-based enrichment in Patten
-<code>"I"</code> is shown in Step 6.2.</p>
+all expression patterns. Visualization of bin-based enrichment in
+Pattern <code>"I"</code> is shown in Step 6.2.</p>
 </div>
 </div>
 <div class="section level2">
@@ -342,41 +322,25 @@ demonstrate both <strong>group-based</strong> and
 genes from a specific pattern (e.g., <code>"I"</code>, <code>"D"</code>,
 <code>"ID"</code>, etc.). In <code>Pseudotimecascade</code>, this is
 implemented through the enrichment functions described in Step 5, and
-the results can be visualized to highlight key GO terms.</p>
+the results can be visualized to highlight key GO terms through the
+function <code><a href="../reference/plotEnrichGroup.html">plotEnrichGroup()</a></code>.</p>
 <p>Here we demonstrate how to visualize the enrichment results for the
-<code>"I"</code> pattern, using manual selection of GO terms.</p>
+<code>"I"</code> pattern, where users can either supply a predefined
+list of GO terms to highlight specific processes or rely on top-ranked
+terms returned by the enrichment analysis.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">Pseudotimecascade</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://yulab-smu.top/contribution-knowledge-mining/" class="external-link">clusterProfiler</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Load enrichment result</span></span>
-<span><span class="va">obj_enrich</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"STIP_group_enrichment.rds"</span>, package <span class="op">=</span> <span class="st">"Pseudotimecascade"</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># Load enrichment result</span></span>
+<span><span class="va">obj_enrich</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"pseudo_group_enrichment.rds"</span>, package <span class="op">=</span> <span class="st">"Pseudotimecascade"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Pattern of interest (e.g., "I" or "D")</span></span>
 <span><span class="va">group</span> <span class="op">&lt;-</span> <span class="st">"I"</span></span>
-<span><span class="va">group_enrich</span> <span class="op">&lt;-</span> <span class="va">obj_enrich</span><span class="op">[[</span><span class="va">group</span><span class="op">]</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Select GO terms </span></span>
 <span><span class="va">terms</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"GO:0048821"</span>, <span class="st">"GO:0030218"</span>, <span class="st">"GO:0030099"</span>, <span class="st">"GO:0020027"</span>, <span class="st">"GO:0043249"</span>, <span class="st">"GO:0070482"</span><span class="op">)</span></span>
-<span><span class="va">group_enrich</span><span class="op">@</span><span class="va">result</span> <span class="op">&lt;-</span> <span class="va">group_enrich</span><span class="op">@</span><span class="va">result</span><span class="op">[</span><span class="va">group_enrich</span><span class="op">@</span><span class="va">result</span><span class="op">$</span><span class="va">ID</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">terms</span>, <span class="op">]</span></span>
-<span><span class="va">group_enrich</span><span class="op">@</span><span class="va">result</span> <span class="op">&lt;-</span> <span class="va">group_enrich</span><span class="op">@</span><span class="va">result</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">group_enrich</span><span class="op">@</span><span class="va">result</span><span class="op">$</span><span class="va">qvalue</span><span class="op">)</span>, <span class="op">]</span></span>
 <span></span>
-<span><span class="va">plot_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span></span>
-<span>  <span class="va">group_enrich</span><span class="op">@</span><span class="va">result</span>,</span>
-<span>  <span class="va">ID</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">terms</span></span>
-<span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">group_enrich</span><span class="op">@</span><span class="va">result</span><span class="op">$</span><span class="va">qvalue</span><span class="op">)</span>, <span class="op">]</span></span>
-<span></span>
-<span><span class="va">plot_data</span><span class="op">$</span><span class="va">GeneRatio_num</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">plot_data</span><span class="op">$</span><span class="va">GeneRatio</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">eval</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/parse.html" class="external-link">parse</a></span><span class="op">(</span>text <span class="op">=</span> <span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># plot</span></span>
-<span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">plot_data</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">GeneRatio_num</span>, <span class="fu"><a href="https://rdrr.io/r/stats/reorder.factor.html" class="external-link">reorder</a></span><span class="op">(</span><span class="va">Description</span>, <span class="va">GeneRatio_num</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>size <span class="op">=</span> <span class="va">Count</span>, color <span class="op">=</span> <span class="va">qvalue</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_gradient.html" class="external-link">scale_color_gradient</a></span><span class="op">(</span>low <span class="op">=</span> <span class="st">"red"</span>, high <span class="op">=</span> <span class="st">"blue"</span>, name <span class="op">=</span> <span class="st">"q-value"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_size.html" class="external-link">scale_size</a></span><span class="op">(</span>range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">8</span><span class="op">)</span>, name <span class="op">=</span> <span class="st">"Count"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Gene Ratio"</span>, y <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
+<span><span class="co"># Visualize group-based enrichment result</span></span>
+<span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plotEnrichGroup.html">plotEnrichGroup</a></span><span class="op">(</span><span class="va">obj_enrich</span><span class="op">[[</span><span class="va">group</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>                       terms <span class="op">=</span> <span class="va">terms</span><span class="op">)</span></span>
 <span><span class="va">p</span></span></code></pre></div>
 <p><img src="Pseudotimecascade_tutorial_files/figure-html/group-enrich-visual-1.png" width="528">
 This plot shows GO enrichment for genes with increasing expression along
@@ -391,35 +355,25 @@ exploration.</p>
 <h3 id="bin-based-enrichment-visualization">6.2: Bin-Based Enrichment Visualization<a class="anchor" aria-label="anchor" href="#bin-based-enrichment-visualization"></a>
 </h3>
 <p>In addition to group-wise enrichment, <code>Pseudotimecascade</code>
-supports bin-based enrichment, which evaluates how functional categories
-appear at different pseudotime windows within each expression pattern.
-This approach helps reveal transient biological processes that may only
-be enriched at specific points along the trajectory.</p>
+supports bin-based enrichment through the function
+<code><a href="../reference/compareEnrichBin.html">compareEnrichBin()</a></code>, which evaluates how functional
+categories appear at different pseudotime windows within each expression
+pattern. The results can then be visualized using the companion function
+<code><a href="../reference/plotEnrichBin.html">plotEnrichBin()</a></code>, which generates a bubble plot of enriched
+terms across bins. This workflow allows users to detect transient
+biological processes that may be enriched only within specific
+pseudotime windows, complementing the broader insights from group-based
+enrichment.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
-<span><span class="co"># Load bin-based enrichment result</span></span>
-<span><span class="va">genes_bin_enrich</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"STIP_bin_enrichment.rds"</span>, package <span class="op">=</span> <span class="st">"Pseudotimecascade"</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># Load bin-based enrichment result</span></span>
+<span><span class="va">genes_bin_enrich</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"pseudo_bin_enrichment.rds"</span>, package <span class="op">=</span> <span class="st">"Pseudotimecascade"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># Pattern of interest (e.g., "I" or "D")</span></span>
 <span><span class="va">pattern</span> <span class="op">&lt;-</span> <span class="st">"I"</span></span>
 <span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">5</span></span>
 <span><span class="va">qval</span> <span class="op">&lt;-</span> <span class="fl">0.05</span></span>
-<span><span class="va">bin_enrich</span> <span class="op">&lt;-</span> <span class="va">genes_bin_enrich</span><span class="op">[[</span><span class="va">pattern</span><span class="op">]</span><span class="op">]</span></span>
-<span><span class="va">tmp_enrich</span> <span class="op">&lt;-</span> <span class="va">bin_enrich</span><span class="op">@</span><span class="va">compareClusterResult</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">Cluster</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">qvalue</span> <span class="op">&lt;=</span> <span class="va">qval</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_min</a></span><span class="op">(</span>order_by <span class="op">=</span> <span class="va">qvalue</span>, n <span class="op">=</span> <span class="va">n</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">ungroup</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">tmp_enrich</span> <span class="op">&lt;-</span> <span class="va">tmp_enrich</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">tmp_enrich</span><span class="op">$</span><span class="va">Cluster</span>, <span class="va">tmp_enrich</span><span class="op">$</span><span class="va">qvalue</span><span class="op">)</span>, <span class="op">]</span></span>
-<span><span class="va">bin_enrich</span><span class="op">@</span><span class="va">compareClusterResult</span> <span class="op">&lt;-</span> <span class="va">bin_enrich</span><span class="op">@</span><span class="va">compareClusterResult</span><span class="op">[</span><span class="va">bin_enrich</span><span class="op">@</span><span class="va">compareClusterResult</span><span class="op">$</span><span class="va">ID</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">tmp_enrich</span><span class="op">$</span><span class="va">ID</span><span class="op">)</span>, <span class="op">]</span></span>
-<span><span class="va">bin_enrich</span><span class="op">@</span><span class="va">compareClusterResult</span><span class="op">$</span><span class="va">Description</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">bin_enrich</span><span class="op">@</span><span class="va">compareClusterResult</span><span class="op">$</span><span class="va">Description</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rev.html" class="external-link">rev</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">tmp_enrich</span><span class="op">$</span><span class="va">Description</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">bin_enrich</span><span class="op">@</span><span class="va">compareClusterResult</span><span class="op">[</span><span class="va">bin_enrich</span><span class="op">@</span><span class="va">compareClusterResult</span><span class="op">$</span><span class="va">qvalue</span><span class="op">&gt;</span><span class="fl">2</span><span class="op">*</span><span class="va">qval</span>, <span class="st">"qvalue"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">2</span><span class="op">*</span><span class="va">qval</span></span>
 <span></span>
-<span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">bin_enrich</span><span class="op">@</span><span class="va">compareClusterResult</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes_.html" class="external-link">aes_string</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Cluster"</span>, y <span class="op">=</span> <span class="st">"Description"</span>, size<span class="op">=</span><span class="st">"Count"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes_.html" class="external-link">aes_string</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"qvalue"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_gradient.html" class="external-link">scale_color_gradient2</a></span><span class="op">(</span>low<span class="op">=</span><span class="st">"red"</span>, high<span class="op">=</span><span class="st">"blue"</span>, midpoint<span class="op">=</span><span class="fl">0.05</span>, breaks<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.05</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>        <span class="fu">DOSE</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DOSE/man/theme_dose.html" class="external-link">theme_dose</a></span><span class="op">(</span>font.size <span class="op">=</span> <span class="fl">12</span><span class="op">)</span> <span class="op">+</span></span>
-<span>        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>y<span class="op">=</span><span class="st">""</span>, x<span class="op">=</span><span class="st">"Gene ranking"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">60</span>, hjust<span class="op">=</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plotEnrichBin.html">plotEnrichBin</a></span><span class="op">(</span><span class="va">genes_bin_enrich</span><span class="op">[[</span><span class="va">pattern</span><span class="op">]</span><span class="op">]</span>, n <span class="op">=</span> <span class="va">n</span>, qval_cutoff <span class="op">=</span> <span class="va">qval</span><span class="op">)</span></span>
 <span><span class="va">p</span></span></code></pre></div>
 <p><img src="Pseudotimecascade_tutorial_files/figure-html/bin-enrichment-visual-1.png" width="960"></p>
 <p>The x-axis shows pseudotime bins (clusters of genes grouped by their
@@ -447,14 +401,11 @@ consensus pattern labels (<code>mean_pattern</code>), and sample-wise
 switching intervals (<code>df_switch_point</code>). These outputs are
 used for enrichment analysis and heatmap visualization.</p>
 <p>Below we visualize selected lineage marker genes from the top 1000
-most significant genes, using the <code><a href="../reference/MSHeatmapSTIP.html">MSHeatmapSTIP()</a></code>
+most significant genes, using the <code><a href="../reference/PseudotimeHeatmapMS.html">PseudotimeHeatmapMS()</a></code>
 function.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">Pseudotimecascade</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jokergoo/ComplexHeatmap" class="external-link">ComplexHeatmap</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Load STIP results from multi-sample integration</span></span>
-<span><span class="va">gene_mean_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"stip_list_multi_sample.rds"</span>, package <span class="op">=</span> <span class="st">"Pseudotimecascade"</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># Load Pseudotimecascade results from multi-sample integration</span></span>
+<span><span class="va">gene_mean_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"pseudo_list_multi_sample.rds"</span>, package <span class="op">=</span> <span class="st">"Pseudotimecascade"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Define marker genes</span></span>
 <span><span class="va">hsc_genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'ERG'</span>, <span class="st">'HOXA5'</span>, <span class="st">'HOXA9'</span>, <span class="st">'HOXA10'</span>, <span class="st">'LCOR'</span>, <span class="st">'RUNX1'</span>, <span class="st">'SPI1'</span>, <span class="st">"CD34"</span><span class="op">)</span></span>
@@ -464,14 +415,14 @@ function.</p>
 <span><span class="va">marked_genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">hsc_genes</span>, <span class="va">cmp_genes</span>, <span class="va">ery_genes</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Draw heatmap</span></span>
-<span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/MSHeatmapSTIP.html">MSHeatmapSTIP</a></span><span class="op">(</span></span>
+<span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/PseudotimeHeatmapMS.html">PseudotimeHeatmapMS</a></span><span class="op">(</span></span>
 <span>  x <span class="op">=</span> <span class="va">gene_mean_list</span><span class="op">[[</span><span class="st">"mean_expr"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  gl <span class="op">=</span> <span class="va">marked_genes</span>,</span>
 <span>  annotation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">gene_mean_list</span><span class="op">[[</span><span class="st">"mean_pattern"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[</span>, <span class="st">"pattern"</span><span class="op">]</span>,</span>
 <span>  interval <span class="op">=</span> <span class="va">gene_mean_list</span><span class="op">[[</span><span class="st">"df_switch_point"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  use_raster <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="fu">ComplexHeatmap</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html" class="external-link">draw</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">p</span></span></code></pre></div>
 <p><img src="Pseudotimecascade_tutorial_files/figure-html/multi-heatmap-1.png" width="576"></p>
 <p>Enrichment analysis can also be applied to the multi-sample results
 in the same way as for a single sample (see Step 5). Specifically, both

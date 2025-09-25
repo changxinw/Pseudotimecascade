@@ -4,27 +4,38 @@
 \alias{enrichPattern}
 \title{enrichPattern}
 \usage{
-enrichPattern(gene.group, pattern, species = "mouse", ont = "BP", ...)
+enrichPattern(
+  gene.group,
+  patterns = NULL,
+  species = "mouse",
+  ont = "BP",
+  universe = NULL,
+  ...
+)
 }
 \arguments{
-\item{gene.group}{a data frame indicate genes in each pattern}
+\item{gene.group}{A data frame indicating genes and their assigned temporal patterns}
 
-\item{pattern}{the pattern for enrichment analysis}
+\item{patterns}{Character vector of patterns to analyze (e.g., c("I","D")),
+or NULL to analyze all patterns}
 
-\item{species}{select from human or mouse}
+\item{species}{"mouse" or "human"}
 
-\item{ont}{One of "BP", "MF", and "CC" subontologies, or "ALL" for all three}
+\item{ont}{One of "BP", "MF", "CC", or "ALL"}
 
-\item{...}{pass to the function enrichGO}
+\item{universe}{Background set of genes (default: NULL → auto-detected)}
+
+\item{...}{Additional arguments passed to enrichment function}
 }
 \value{
-An enrichResult instance
+A named list of enrichResult objects, one per pattern
 }
 \description{
-Enrichment for genes in specific pattern
+Flexible GO enrichment for one, multiple, or all temporal patterns
 }
 \details{
-This function generates an enrichResult instance
+This function performs enrichment analysis for user-specified patterns.
+         If no pattern is provided, all patterns in gene.group will be analyzed
 }
 \author{
 Zhicheng Ji, Changxin Wan, Beijie Ji

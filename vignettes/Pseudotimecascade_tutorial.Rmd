@@ -19,12 +19,12 @@ knitr::opts_chunk$set(
 This tutorial introduces the `Pseudotimecascade` R package, a toolkit for modeling gene expression dynamics along pseudotime trajectories in single-cell RNA-seq data. The method identifies genes with switch-like temporal expression patterns and supports downstream biological interpretation through GO enrichment analysis.
 
 We demonstrate the complete workflow starting from a Seurat object with clustering and dimensionality reduction. The key steps include:
-	•	Computing pseudotime using `TSCAN` or other tools
-	•	Fitting gene trajectories with `fitData()`
-	•	Classifying gene patterns with `genePattern()`
-	•	Visualizing dynamic genes with heatmaps
-	•	Performing enrichment analysis (group-based and bin-based)
-	•	Integrating multi-sample results to assess reproducibility
+- Computing pseudotime using `TSCAN` or other tools  
+- Fitting gene trajectories with `fitData()`  
+- Classifying gene patterns with `genePattern()`  
+- Visualizing dynamic genes with heatmaps  
+- Performing enrichment analysis (group-based and bin-based)  
+- Integrating multi-sample results to assess reproducibility
 
 The pipeline is modular and compatible with any pseudotime method, as long as cells are assigned a numeric pseudotime value. While we illustrate the process using `TSCAN` and specific marker genes from hematopoietic lineages, the same framework can be applied to other systems and datasets.
 
@@ -44,6 +44,8 @@ With cells ordered by pseudotime and the corresponding expression matrix prepare
 The pseudotime vector `pt` provides the numeric position of each cell along this trajectory and must be aligned with the same cell order used in `expr_df`. The argument `new_data` specifies the pseudotime grid on which predictions will be made, and mc.cores sets the number of parallel processes. The output `fit_data_list` contains the fitted expression trajectories, estimated switch points, and statistical metrics that form the basis for downstream pattern classification and enrichment analysis. 
 
 ```{r fit-pseudotime, eval=FALSE}
+library(Pseudotimecascade)
+
 # Ensure cells are ordered by pseudotime
 cells_order <- rownames(obj@meta.data[order(obj$tscan_pseudotime), ])
 expr_df <- obj@assays$RNA@data[, cells_order]
@@ -65,12 +67,12 @@ Once smooth trajectories have been fitted, the next step is to identify the majo
 
 These categories provide an intuitive summary of how genes behave along pseudotime, highlighting switch-like dynamics or more complex expression changes. The output is a data frame where each row corresponds to a gene and columns provide its assigned pattern, the estimated switch point (if applicable), and a ranking statistic for visualization.
 
-In this tutorial, we store the fitted expression matrix, the list of fit results, and the gene-level pattern assignments together in a single object (`stip_list`), which will serve as the input for downstream heatmaps and enrichment analyses.
+In this tutorial, we store the fitted expression matrix, the list of fit results, and the gene-level pattern assignments together in a single object (`pseudo_list`), which will serve as the input for downstream heatmaps and enrichment analyses.
 
 ```{r gene-pattern, eval=FALSE}
 gene_group <- genePattern(as.data.frame(fit_data_list[["data"]]))
 
-stip_list <- list(
+pseudo_list <- list(
   expr_df = expr_df,
   fit_data = fit_data_list,
   gene_group = gene_group
@@ -84,12 +86,13 @@ To make the visualization clearer and computationally efficient, we do not plot 
 
 In addition to these filtered genes, we also highlight a set of manually chosen marker genes relevant for hematopoietic differentiation. These marker genes are annotated on the heatmap, making it easier to track known regulators and to interpret the overall expression trends in a biological context.
 
-The function `HeatmapSTIP()` automatically orders genes by their assigned expression pattern and estimated switch point location, and produces a heatmap where each row is a gene and each column a pseudotime-sampled cell. This view provides a compact summary of dynamic gene expression programs along the trajectory.
+The function `PseudotimeHeatmap()` automatically orders genes by their assigned expression pattern and estimated switch point location, and produces a heatmap where each row is a gene and each column a pseudotime-sampled cell. This view provides a compact summary of dynamic gene expression programs along the trajectory.
 
 ```{r heatmap, fig.width = 6, fig.height=8, message=FALSE, warning=FALSE}
 library(Pseudotimecascade)
-stip_list <- readRDS(
-  system.file("extdata", "stip_list.rds", package = "Pseudotimecascade")
+
+pseudo_list <- readRDS(
+  system.file("extdata", "pseudo_list.rds", package = "Pseudotimecascade")
 )
 
 # Match and sort gene pattern labels
@@ -101,10 +104,10 @@ mon_genes <- c('SPI1', 'IRF8', 'KLF4', 'ERG1', 'JUN', 'JUNB', 'STAT1', 'STAT3', 
 marked_genes <- unique(c(hsc_genes, cmp_genes, ery_genes))
 
 # Plot heatmap
-p <- HeatmapSTIP(x = stip_list$fit_data, 
+p <- PseudotimeHeatmap(x = pseudo_list$fit_data, 
                  gl = marked_genes, 
-                 annotation = as.matrix(stip_list$gene_group)[, "pattern"])
-ComplexHeatmap::draw(p)
+                 annotation = as.matrix(pseudo_list$gene_group)[, "pattern"])
+p
 ```
 
 
@@ -114,35 +117,27 @@ We identify enriched biological processes for pseudotime-dynamic genes using two
 
 ### 5.1: Group-Based Enrichment
 
-Group-based enrichment in `Pseudotimecascade` is carried out using the `enrichPattern()` function, which is specifically designed for temporal gene expression analysis. Given a gene grouping table produced by `genePattern()`, users can call `enrichPattern()` to test for functional overrepresentation within one specific pattern of interest (e.g., "I" or "D"). 
+Group-based enrichment in `Pseudotimecascade` is carried out using the `enrichPattern()` function, which is specifically designed for temporal gene expression analysis. Given a gene grouping table produced by `genePattern()`, users can call `enrichPattern()` to test for functional overrepresentation within one specific pattern (e.g., "I" or "D") or across all patterns at once. 
 
-This function automatically extracts the genes belonging to the chosen pattern and performs GO enrichment against a user-defined background (the `universe`). In practice, the universe is set to all genes detected in the dataset after preprocessing, ensuring that enrichment is interpreted relative to the expressed gene set. This analysis links temporal gene expression patterns to biological processes, highlighting which functions are enriched among dynamically regulated genes.
+This function automatically extracts the genes belonging to the chosen pattern and performs GO enrichment against a user-defined background (the `universe`). In practice, the universe is set to all genes detected in the dataset after preprocessing, ensuring that enrichment is interpreted relative to the expressed gene set. This analysis links temporal gene expression dynamics to biological processes, highlighting enriched functions associated with distinct pseudotime patterns.
 
 ```{r group-enrich, eval=FALSE}
-library(Pseudotimecascade)
 library(dplyr)
-library(clusterProfiler)
 
 # Order gene pattern labels
-ggene_group <- stip_list[["gene_group"]][rownames(stip_list[["fit_data"]][["data"]]), ]
+ggene_group <- pseudo_list[["gene_group"]][rownames(pseudo_list[["fit_data"]][["data"]]), ]
 gene_group <- gene_group[order(gene_group$pattern, gene_group$rank_point), ]
 
 # Perform GO enrichment for each pattern
-enrich_group_list <- list()
-for (gp in unique(gene_group$pattern)) {
-  enrich_group <- enrichPattern(gene_group, gp, "human", universe = universe)
-  
-  # Compute enrichment ratio
-  enrich_group@result$EnrichRatio <- with(enrich_group@result, {
-    (as.numeric(sub("/.*", "", GeneRatio)) * as.numeric(sub(".*/", "", BgRatio))) /
-    (as.numeric(sub(".*/", "", GeneRatio)) * as.numeric(sub("/.*", "", BgRatio)))
-  })
-  
-  enrich_group_list[[gp]] <- enrich_group
-}
+enrich_group_list <- enrichPattern(
+  gene.group = gene_group,
+  species = "human",
+  universe = universe,
+  ont = "BP"
+)
 
 # Save results
-saveRDS(enrich_group_list, "STIP_group_enrichment.rds")
+saveRDS(enrich_group_list, "pseudo_group_enrichment.rds")
 ```
 
 Tip: You may later visualize these results as shown in Step 6.1.
@@ -160,6 +155,7 @@ pattern <- "I"
 bin.width <- 0.2
 stride <- 0.1
 
+# Run bin-based enrichment
 genes_bin_enrich <- compareEnrichBin(
   gene_group,
   pattern = pattern,
@@ -170,17 +166,11 @@ genes_bin_enrich <- compareEnrichBin(
   universe = universe
 )
 
-# Compute enrichment ratio
-genes_bin_enrich@compareClusterResult$EnrichRatio <- with(genes_bin_enrich@compareClusterResult, {
-  (as.numeric(sub("/.*", "", GeneRatio)) * as.numeric(sub(".*/", "", BgRatio))) /
-  (as.numeric(sub(".*/", "", GeneRatio)) * as.numeric(sub("/.*", "", BgRatio)))
-})
-
 # Save results
-saveRDS(genes_bin_enrich, "STIP_bin_enrichment.rds")
+saveRDS(genes_bin_enrich, "pseudo_bin_enrichment.rds")
 ```
 
-Tip: While we demonstrate bin-based enrichment using the `"I"` pattern here, the full analysis can be performed across all expression patterns. Visualization of bin-based enrichment in Patten `"I"` is shown in Step 6.2.
+Tip: While we demonstrate bin-based enrichment using the `"I"` pattern here, the full analysis can be performed across all expression patterns. Visualization of bin-based enrichment in Pattern `"I"` is shown in Step 6.2.
 
 ## Step 6: Visualization of GO Enrichment Results
 
@@ -188,42 +178,23 @@ After identifying gene patterns using `Pseudotimecascade`, we visualize enriched
 
 ### 6.1: Group-Based Enrichment Visualization
 
-Group enrichment analyzes the overrepresentation of GO terms among genes from a specific pattern (e.g., `"I"`, `"D"`, `"ID"`, etc.). In `Pseudotimecascade`, this is implemented through the enrichment functions described in Step 5, and the results can be visualized to highlight key GO terms.
+Group enrichment analyzes the overrepresentation of GO terms among genes from a specific pattern (e.g., `"I"`, `"D"`, `"ID"`, etc.). In `Pseudotimecascade`, this is implemented through the enrichment functions described in Step 5, and the results can be visualized to highlight key GO terms through the function `plotEnrichGroup()`.
 
-Here we demonstrate how to visualize the enrichment results for the `"I"` pattern, using manual selection of GO terms.
+Here we demonstrate how to visualize the enrichment results for the `"I"` pattern, where users can either supply a predefined list of GO terms to highlight specific processes or rely on top-ranked terms returned by the enrichment analysis.
 
 ```{r group-enrich-visual,fig.width = 5.5, fig.height=5, message=FALSE, warning=FALSE}
-library(Pseudotimecascade)
-library(clusterProfiler)
-library(ggplot2)
-
 # Load enrichment result
-obj_enrich <- readRDS(system.file("extdata", "STIP_group_enrichment.rds", package = "Pseudotimecascade"))
+obj_enrich <- readRDS(system.file("extdata", "pseudo_group_enrichment.rds", package = "Pseudotimecascade"))
 
 # Pattern of interest (e.g., "I" or "D")
 group <- "I"
-group_enrich <- obj_enrich[[group]]
 
 # Select GO terms 
 terms <- c("GO:0048821", "GO:0030218", "GO:0030099", "GO:0020027", "GO:0043249", "GO:0070482")
-group_enrich@result <- group_enrich@result[group_enrich@result$ID %in% terms, ]
-group_enrich@result <- group_enrich@result[order(group_enrich@result$qvalue), ]
 
-plot_data <- subset(
-  group_enrich@result,
-  ID %in% terms
-)[order(group_enrich@result$qvalue), ]
-
-plot_data$GeneRatio_num <- sapply(plot_data$GeneRatio, function(x) eval(parse(text = x)))
-
-# plot
-p <- ggplot(plot_data, aes(GeneRatio_num, reorder(Description, GeneRatio_num))) +
-  geom_point(aes(size = Count, color = qvalue)) +
-  scale_color_gradient(low = "red", high = "blue", name = "q-value") +
-  scale_size(range = c(2, 8), name = "Count") +
-  labs(x = "Gene Ratio", y = NULL) +
-  theme_bw()
-
+# Visualize group-based enrichment result
+p <- plotEnrichGroup(obj_enrich[[group]],
+                       terms = terms)
 p
 ```
 This plot shows GO enrichment for genes with increasing expression along pseudotime. Dot size indicates the number of genes (Count), the x-axis shows the fraction of increasing genes annotated to each GO term (GeneRatio), and color reflects enrichment significance (q-value).
@@ -232,33 +203,18 @@ Tip: In addition to manual selection, users may also automatically display the t
 
 ### 6.2: Bin-Based Enrichment Visualization
 
-In addition to group-wise enrichment, `Pseudotimecascade` supports bin-based enrichment, which evaluates how functional categories appear at different pseudotime windows within each expression pattern. This approach helps reveal transient biological processes that may only be enriched at specific points along the trajectory.
+In addition to group-wise enrichment, `Pseudotimecascade` supports bin-based enrichment through the function `compareEnrichBin()`, which evaluates how functional categories appear at different pseudotime windows within each expression pattern. The results can then be visualized using the companion function `plotEnrichBin()`, which generates a bubble plot of enriched terms across bins. This workflow allows users to detect transient biological processes that may be enriched only within specific pseudotime windows, complementing the broader insights from group-based enrichment.
 
 ```{r bin-enrichment-visual, fig.width = 10, fig.height=12, message=FALSE, warning=FALSE}
-library(dplyr)
 # Load bin-based enrichment result
-genes_bin_enrich <- readRDS(system.file("extdata", "STIP_bin_enrichment.rds", package = "Pseudotimecascade"))
+genes_bin_enrich <- readRDS(system.file("extdata", "pseudo_bin_enrichment.rds", package = "Pseudotimecascade"))
 
+# Pattern of interest (e.g., "I" or "D")
 pattern <- "I"
 n <- 5
 qval <- 0.05
-bin_enrich <- genes_bin_enrich[[pattern]]
-tmp_enrich <- bin_enrich@compareClusterResult %>%
-  group_by(Cluster) %>%
-  filter(qvalue <= qval) %>%
-  slice_min(order_by = qvalue, n = n) %>%
-  ungroup()
-tmp_enrich <- tmp_enrich[order(tmp_enrich$Cluster, tmp_enrich$qvalue), ]
-bin_enrich@compareClusterResult <- bin_enrich@compareClusterResult[bin_enrich@compareClusterResult$ID %in% unique(tmp_enrich$ID), ]
-bin_enrich@compareClusterResult$Description <- factor(bin_enrich@compareClusterResult$Description, levels = rev(unique(tmp_enrich$Description)))
-bin_enrich@compareClusterResult[bin_enrich@compareClusterResult$qvalue>2*qval, "qvalue"] <- 2*qval
 
-p <- ggplot(bin_enrich@compareClusterResult, aes_string(x = "Cluster", y = "Description", size="Count")) +
-        geom_point(aes_string(color = "qvalue")) +
-        scale_color_gradient2(low="red", high="blue", midpoint=0.05, breaks=c(0.05)) +
-        DOSE::theme_dose(font.size = 12) +
-        labs(y="", x="Gene ranking") +
-        theme(axis.text.x = element_text(angle = 60, hjust=1))
+p <- plotEnrichBin(genes_bin_enrich[[pattern]], n = n, qval_cutoff = qval)
 p
 ```
 
@@ -272,14 +228,11 @@ In this section, we demonstrate how to integrate `Pseudotimecascade` results acr
 
 We first merge the gene-level trends across samples, resulting in a list containing average pseudotime expression (`mean_expr`), consensus pattern labels (`mean_pattern`), and sample-wise switching intervals (`df_switch_point`). These outputs are used for enrichment analysis and heatmap visualization.
 
-Below we visualize selected lineage marker genes from the top 1000 most significant genes, using the `MSHeatmapSTIP()` function.
+Below we visualize selected lineage marker genes from the top 1000 most significant genes, using the `PseudotimeHeatmapMS()` function.
 
 ```{r multi-heatmap, fig.width = 6, fig.height=8, message=FALSE, warning=FALSE}
-library(Pseudotimecascade)
-library(ComplexHeatmap)
-
-# Load STIP results from multi-sample integration
-gene_mean_list <- readRDS(system.file("extdata", "stip_list_multi_sample.rds", package = "Pseudotimecascade"))
+# Load Pseudotimecascade results from multi-sample integration
+gene_mean_list <- readRDS(system.file("extdata", "pseudo_list_multi_sample.rds", package = "Pseudotimecascade"))
 
 # Define marker genes
 hsc_genes <- c('ERG', 'HOXA5', 'HOXA9', 'HOXA10', 'LCOR', 'RUNX1', 'SPI1', "CD34")
@@ -289,16 +242,15 @@ ery_genes <- c('GATA1', 'TAL1', 'KLF1', 'LDB1', 'ZFPM1', 'ZBTB7A', 'MYB', "HBB",
 marked_genes <- unique(c(hsc_genes, cmp_genes, ery_genes))
 
 # Draw heatmap
-p <- MSHeatmapSTIP(
+p <- PseudotimeHeatmapMS(
   x = gene_mean_list[["mean_expr"]],
   gl = marked_genes,
   annotation = as.matrix(gene_mean_list[["mean_pattern"]])[, "pattern"],
   interval = gene_mean_list[["df_switch_point"]],
   use_raster = FALSE
 )
-ComplexHeatmap::draw(p)
+p
 ```
-
 
 Enrichment analysis can also be applied to the multi-sample results in the same way as for a single sample (see Step 5). Specifically, both group-based enrichment (using `enrichPattern()`) and bin-based enrichment (using `compareEnrichBin()`) can be applied to the mean_pattern matrix.
 

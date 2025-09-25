@@ -57,17 +57,17 @@
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>#' @title PreprocessSTIP
-#' @description State Transition Inference Prediction Preprocess
-#' @details This function generates a table that performs (STIP) State Transition Inference Prediction
+    <p>#' @title PreprocessPseudotime
+#' @description Pseudotimecascade Preprocess
+#' @details This function generates a table that performs Pseudotimecascade
 #' @param data a single cell expression matrix or data.frame with rows as genes and columns as cells. Cells should follow the order of pseudo time
 #' @param gl marked gene list
 #' @return A Heatmap-class object
-#' @export PreprocessSTIP
-PreprocessSTIP &lt;- function(data, gl)
+#' @export PreprocessPseudotime
+PreprocessPseudotime &lt;- function(data, gl)
   gene_group &lt;- genePattern(data)
   plotdata &lt;- data[rownames(gene_group), ]
-  p &lt;- HeatmapSTIP(plotdata, gl, as.matrix(gene_group)[, "pattern"])
+  p &lt;- PseudotimeHeatmap(plotdata, gl, as.matrix(gene_group)[, "pattern"])
   return(p)</p>
 <p>This function generates the state transition pattern of input gene</p>
     </div>

@@ -1,5 +1,89 @@
-#' @title HeatmapSTIP
-#' @description  Generate heatmap for STIP result
+#' @title plotEnrichGroup
+#' @description Visualize GO enrichment results for a specific expression pattern
+#' @details This function takes an enrichment result from \code{enrichPattern()}
+#'          or group-enrichment list, selects user-defined GO terms (or top-ranked ones),
+#'          and generates a bubble plot summarizing the enrichment.
+#'
+#' @param enrich_obj An \code{enrichResult} object (from \code{enrichPattern()})
+#'                   or one element of a group enrichment list
+#' @param terms Character vector of GO IDs to display. If NULL, top \code{n} terms are shown.
+#' @param n Number of top terms to show if \code{terms = NULL} (default: 10)
+#' @return A ggplot2 object of the bubble plot
+#' @author Zhicheng Ji, Changxin Wan, Beijie Ji
+#' @export plotEnrichGroup
+#' @import ggplot2
+#' @importFrom dplyr arrange
+plotEnrichGroup <- function(enrich_obj, terms = NULL, n = 10) {
+  df <- enrich_obj@result
+
+  # Select the terms or take the first n
+  if (!is.null(terms)) {
+    df <- df[df$ID %in% terms, ]
+  } else {
+    df <- df %>% dplyr::arrange(qvalue) %>% head(n)
+  }
+
+  # Convert GeneRatio to a numerical value
+  df$GeneRatio_num <- sapply(df$GeneRatio, function(x) eval(parse(text = x)))
+  df <- df[order(df$qvalue), ]
+
+  # Plot
+  p <- ggplot(df, aes(GeneRatio_num, reorder(Description, GeneRatio_num))) +
+    geom_point(aes(size = Count, color = qvalue)) +
+    scale_color_gradient(low = "red", high = "blue", name = "q-value") +
+    scale_size(range = c(2, 8), name = "Count") +
+    labs(x = "Gene Ratio", y = NULL) +
+    theme_bw()
+
+  return(p)
+}
+
+#' @title plotEnrichBin
+#' @description Visualize bin-based GO enrichment results
+#' @details Given the output of \code{compareEnrichBin()}, this function generates
+#'          a bubble plot of enriched GO terms across pseudotime bins. The top
+#'          terms within each bin are selected based on q-value cutoff and ranking.
+#'
+#' @param bin_enrich A \code{compareClusterResult} object, typically from \code{compareEnrichBin()}.
+#' @param n Number of top GO terms to select per bin (default = 5).
+#' @param qval_cutoff q-value cutoff for filtering enriched terms (default = 0.05).
+#' @param font.size Font size for the plot theme (default = 12).
+#' @author Zhicheng Ji, Changxin Wan, Beijie Ji
+#' @return A ggplot2 object representing the bubble plot
+#' @export plotEnrichBin
+#' @import ggplot2 dplyr DOSE
+plotEnrichBin <- function(bin_enrich, n = 5, qval_cutoff = 0.05, font.size = 12) {
+
+  # select top enriched terms per bin
+  tmp_enrich <- bin_enrich@compareClusterResult %>%
+    dplyr::group_by(Cluster) %>%
+    dplyr::filter(qvalue <= qval_cutoff) %>%
+    dplyr::slice_min(order_by = qvalue, n = n) %>%
+    dplyr::ungroup()
+
+  # update results for plotting
+  bin_enrich@compareClusterResult <- bin_enrich@compareClusterResult[
+    bin_enrich@compareClusterResult$ID %in% unique(tmp_enrich$ID), ]
+  bin_enrich@compareClusterResult$Description <- factor(
+    bin_enrich@compareClusterResult$Description,
+    levels = rev(unique(tmp_enrich$Description))
+  )
+  bin_enrich@compareClusterResult[bin_enrich@compareClusterResult$qvalue > 2*qval_cutoff, "qvalue"] <- 2*qval_cutoff
+
+  # bubble plot
+  p <- ggplot(bin_enrich@compareClusterResult, aes(x = Cluster, y = Description, size = Count)) +
+    geom_point(aes(color = qvalue)) +
+    scale_color_gradient2(low = "red", high = "blue", midpoint = qval_cutoff, name = "q-value") +
+    DOSE::theme_dose(font.size = font.size) +
+    labs(x = "Gene ranking", y = NULL) +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1))
+
+  return(p)
+}
+
+
+#' @title PseudotimeHeatmap
+#' @description  Generate heatmap for Pseudotimecascade result
 #' @details Input a gene expression matrix and annotation matrixes, output a heatmap
 #' @param x A gene expression matrix
 #' @param gl Marked gene list
@@ -7,12 +91,12 @@
 #' @param ... parameters passed to Heatmap
 #' @return A ComplexHeatmap object
 #' @author Zhicheng Ji, Changxin Wan, Beijie Ji
-#' @export HeatmapSTIP
+#' @export PseudotimeHeatmap
 #' @importFrom ComplexHeatmap Heatmap rowAnnotation anno_mark
 #' @importFrom circlize colorRamp2
 #' @importFrom grDevices colorRampPalette
 #' @import dplyr
-HeatmapSTIP <- function(x, gl, annotation, ...){
+PseudotimeHeatmap <- function(x, gl, annotation, ...){
   x <- x[names(annotation), ]
   paletteLength <- 1000
   myColor <- grDevices::colorRampPalette(c("darkblue", "#6baed6", "#bdd7e7", "white", "#fcae91", "#fb6a4a", "darkred"))(paletteLength)
@@ -26,8 +110,8 @@ HeatmapSTIP <- function(x, gl, annotation, ...){
 }
 
 
-#' @title MSHeatmapSTIP
-#' @description  Generate heatmap for multi-sample STIP result
+#' @title PseudotimeHeatmapMS
+#' @description  Generate heatmap for multi-sample Pseudotimecascade result
 #' @details Input a gene expression matrix and annotation matrixes, output a heatmap
 #' @param x A gene expression matrix
 #' @param gl Marked gene list
@@ -36,14 +120,14 @@ HeatmapSTIP <- function(x, gl, annotation, ...){
 #' @param ... parameters passed to Heatmap
 #' @return A ComplexHeatmap object
 #' @author Zhicheng Ji, Changxin Wan, Beijie Ji
-#' @export MSHeatmapSTIP
+#' @export PseudotimeHeatmapMS
 #' @importFrom ComplexHeatmap Heatmap rowAnnotation anno_mark restore_matrix
 #' @importFrom circlize colorRamp2
 #' @importFrom grDevices colorRampPalette
 #' @importFrom grid grid.points grid.segments gpar unit
 #' @importFrom stats sd qnorm na.omit
 #' @import dplyr
-MSHeatmapSTIP <- function(x, gl, annotation, interval, ...){
+PseudotimeHeatmapMS <- function(x, gl, annotation, interval, ...){
   x <- x[names(annotation), ]
   paletteLength <- 1000
   myColor <- grDevices::colorRampPalette(c("darkblue", "#6baed6", "#bdd7e7", "white", "#fcae91", "#fb6a4a", "darkred"))(paletteLength)
@@ -77,7 +161,7 @@ MSHeatmapSTIP <- function(x, gl, annotation, interval, ...){
   return(p)
 }
 
-#' #' @title ScatterPlotSTIP
+#' #' @title ScatterPlotPseudotime
 #' #' @description  Generate scatter plot for gene in fitted matrix
 #' #' @details Input fitted expression, output a scatter plot
 #' #' @param data A fitted gene expression matrix
@@ -85,9 +169,9 @@ MSHeatmapSTIP <- function(x, gl, annotation, interval, ...){
 #' #' @param count set true if data is count matrix
 #' #' @return A ggplot object
 #' #' @author Zhicheng Ji, Changxin Wan, Beijie Ji
-#' #' @export ScatterPlotSTIP
+#' #' @export ScatterPlotPseudotime
 #' #' @import ggplot2
-#' ScatterPlotSTIP <- function(data, gene, count=FALSE) {
+#' ScatterPlotPseudotime <- function(data, gene, count=FALSE) {
 #'   plot_df <- data.frame(t(data[gene, ]), row.names = colnames(data))
 #'   plot_df$cell <- 1:nrow(plot_df)
 #'   colnames(plot_df) <- c("gene", "cell")

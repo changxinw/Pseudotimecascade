@@ -16,30 +16,32 @@ compareEnrichBin(
 )
 }
 \arguments{
-\item{gene.group}{a data frame indicate genes in each pattern}
+\item{gene.group}{A data frame indicating genes in each pattern}
 
-\item{pattern}{the pattern for enrichment analysis}
+\item{pattern}{The expression pattern for enrichment analysis}
 
-\item{bin.width}{the width of each bin}
+\item{bin.width}{The width of each bin}
 
-\item{stride}{stride of each step}
+\item{stride}{Stride of each step}
 
-\item{species}{select from human or mouse}
+\item{species}{Select from human or mouse}
 
 \item{ont}{One of "BP", "MF", and "CC" subontologies, or "ALL" for all three}
 
-\item{universe}{pass to the universe paramenter of enrichGO}
+\item{universe}{Pass to the universe paramenter of enrichGO}
 
-\item{...}{pass to the function enrichGO}
+\item{...}{Pass to the function enrichGO}
 }
 \value{
-compareClusterResult instance
+A compareClusterResult object summarizing enrichment results across bins
 }
 \description{
-Enrichment for ordered genes in specific pattern
+Bin-based enrichment for ordered genes in a specific pattern
 }
 \details{
-This function generates a list with genes and enrichResult instance
+This function partitions genes within a temporal expression pattern into bins
+         along pseudotime and performs GO enrichment on each bin. The output contains
+         enrichment results for all bins
 }
 \author{
 Zhicheng Ji, Changxin Wan, Beijie Ji

@@ -1,14 +1,14 @@
-#' #' @title PreprocessSTIP
-#' #' @description State Transition Inference Prediction Preprocess
-#' #' @details This function generates a table that performs (STIP) State Transition Inference Prediction
+#' #' @title PreprocessPseudotime
+#' #' @description Pseudotimecascade Preprocess
+#' #' @details This function generates a table that performs Pseudotimecascade
 #' #' @param data a single cell expression matrix or data.frame with rows as genes and columns as cells. Cells should follow the order of pseudo time
 #' #' @param gl marked gene list
 #' #' @return A Heatmap-class object
-#' #' @export PreprocessSTIP
-#' PreprocessSTIP <- function(data, gl){
+#' #' @export PreprocessPseudotime
+#' PreprocessPseudotime <- function(data, gl){
 #'   gene_group <- genePattern(data)
 #'   plotdata <- data[rownames(gene_group), ]
-#'   p <- HeatmapSTIP(plotdata, gl, as.matrix(gene_group)[, "pattern"])
+#'   p <- PseudotimeHeatmap(plotdata, gl, as.matrix(gene_group)[, "pattern"])
 #'   return(p)
 #' }
 

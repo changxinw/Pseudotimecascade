@@ -4,16 +4,26 @@
 \alias{genePattern}
 \title{genePattern}
 \usage{
-genePattern(data)
+genePattern(
+  data,
+  switch_method = c("zero_crossing", "threshold_crossing", "max_first_derivative"),
+  cutoff = 0
+)
 }
 \arguments{
-\item{data}{a single cell expression matrix or data.frame with rows as genes and columns as cells. Cells should follow the order of pseudo time}
+\item{data}{a single cell expression matrix or data.frame with rows as genes and columns as cells.
+Cells should follow the order of pseudo time.}
+
+\item{switch_method}{character specifying switch point definition.
+Default is \code{"zero_crossing"}.}
+
+\item{cutoff}{numeric baseline used only when \code{switch_method = "threshold_crossing"}.}
 }
 \value{
-A dataframe of state transtion pattern
+A dataframe of state transition pattern
 }
 \description{
-State transition pattern of each gene
+State transition pattern of each gene with flexible switch point definitions
 }
 \details{
 #' @title PreprocessPseudotime
@@ -30,7 +40,13 @@ PreprocessPseudotime <- function(data, gl){
   return(p)
 }
 
-This function generates the state transition pattern of input gene
+ This function generates the state transition pattern of input gene
+along pseudotime. Switch points can be defined by:
+\itemize{
+  \item \code{"zero_crossing"}: sign change around 0 (default).
+  \item \code{"threshold_crossing"}: sign change around a user-defined \code{cutoff}.
+  \item \code{"max_first_derivative"}: position with the largest absolute first derivative.
+}
 }
 \author{
 Zhicheng Ji, Changxin Wan, Beijie Ji

@@ -23,7 +23,8 @@ Visualize GO enrichment results for a specific expression pattern
 \details{
 This function takes an enrichment result from \code{enrichPattern()}
          or group-enrichment list, selects user-defined GO terms (or top-ranked ones),
-         and generates a bubble plot summarizing the enrichment.
+         and generates a bubble plot summarizing the enrichment. Gene ratio is shown on the x-axis, enriched terms on the y-axis,
+         point size represents gene count, and color represents adjusted q-value.
 }
 \author{
 Zhicheng Ji, Changxin Wan, Beijie Ji

@@ -6,11 +6,11 @@
 \usage{
 fitData(
   data,
-  pt = 1:ncol(data),
   expr.cut = 0.1,
   expr.cut.rate = 0.05,
   pseudo.time = colnames(data),
   p.adjust.method = "BH",
+  pt = 1:ncol(data),
   new_data = data.frame(pt = seq(1, ncol(data))),
   verbose = TRUE,
   mc.cores = 1
@@ -19,28 +19,39 @@ fitData(
 \arguments{
 \item{data}{a single cell expression matrix with rows as genes and columns as cells.}
 
-\item{expr.cut}{cutoff of lowerest expression}
+\item{expr.cut}{cutoff of lowest expression.}
 
-\item{expr.cut.rate}{cutoff of cells lower than lowest expression}
+\item{expr.cut.rate}{cutoff proportion of cells above expression threshold.}
 
-\item{pseudo.time}{cells ranked according to pseudo time}
+\item{pseudo.time}{cells ranked according to pseudotime.}
 
-\item{p.adjust.method}{method for multiple hypothesis test}
+\item{p.adjust.method}{method for multiple hypothesis test.}
 
-\item{new_data}{input matrix for model prediction}
+\item{pt}{numeric pseudotime index used in model fitting.}
 
-\item{verbose}{show message of running process}
+\item{new_data}{input matrix for model prediction.}
 
-\item{mc.cores}{number of cores for parallel computing}
+\item{verbose}{show message of running process.}
+
+\item{mc.cores}{number of cores for parallel computing.}
+
+\item{df}{degrees of freedom for spline smoothing (default = 2).}
+
+\item{tobit_lower}{lower bound for tobit model (default = 0.1).}
+
+\item{maxit}{maximum number of iterations for model fitting (default = 50).}
 }
 \value{
-A list contains scaled fitted gene expression matrix
+A list containing fitted models, scaled fitted expression matrix,
+raw p-values and adjusted q-values.
 }
 \description{
-Fit single cell gene expression data according to cell pseudotime
+Fit single cell gene expression data along pseudotime with flexible smoothing parameters
 }
 \details{
-This function generates a fitted expression matrix of single cell RNA-seq
+This function fits gene expression trajectories using a VGAM tobit model
+with smoothing spline on pseudotime. Model parameters such as degrees of freedom,
+tobit lower bound, and maximum iterations can be adjusted.
 }
 \author{
 Zhicheng Ji, Changxin Wan, Beijie Ji

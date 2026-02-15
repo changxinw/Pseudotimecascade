@@ -104,9 +104,14 @@ mon_genes <- c('SPI1', 'IRF8', 'KLF4', 'ERG1', 'JUN', 'JUNB', 'STAT1', 'STAT3', 
 marked_genes <- unique(c(hsc_genes, cmp_genes, ery_genes))
 
 # Plot heatmap
-p <- PseudotimeHeatmap(x = pseudo_list$fit_data, 
-                 gl = marked_genes, 
-                 annotation = as.matrix(pseudo_list$gene_group)[, "pattern"])
+p <- PseudotimeHeatmap(
+  x = pseudo_list$fit_data,
+  gl = marked_genes,
+  annotation = as.matrix(pseudo_list$gene_group)[, "pattern"],
+  show_sp = TRUE,
+  switch_point = setNames(pseudo_list$gene_group$switch_point, rownames(pseudo_list$gene_group))
+)
+
 p
 ```
 
@@ -122,8 +127,6 @@ Group-based enrichment in `Pseudotimecascade` is carried out using the `enrichPa
 This function automatically extracts the genes belonging to the chosen pattern and performs GO enrichment against a user-defined background (the `universe`). In practice, the universe is set to all genes detected in the dataset after preprocessing, ensuring that enrichment is interpreted relative to the expressed gene set. This analysis links temporal gene expression dynamics to biological processes, highlighting enriched functions associated with distinct pseudotime patterns.
 
 ```{r group-enrich, eval=FALSE}
-library(dplyr)
-
 # Order gene pattern labels
 ggene_group <- pseudo_list[["gene_group"]][rownames(pseudo_list[["fit_data"]][["data"]]), ]
 gene_group <- gene_group[order(gene_group$pattern, gene_group$rank_point), ]
@@ -224,15 +227,39 @@ Tip: You can adjust pattern, n, and qval_cutoff to explore different enrichment 
 
 ## Step 7:  Multi-sample Pseudotimecascade Analysis
 
-In this section, we demonstrate how to integrate `Pseudotimecascade` results across multiple samples to identify reproducible gene patterns and switch point trends. This allows robust functional inference across donors or replicates.
+In this section, we demonstrate how to integrate `Pseudotimecascade` results across multiple samples to identify reproducible gene patterns and switch point trends. This allows more robust functional inference across donors or biological replicates.
 
-We first merge the gene-level trends across samples, resulting in a list containing average pseudotime expression (`mean_expr`), consensus pattern labels (`mean_pattern`), and sample-wise switching intervals (`df_switch_point`). These outputs are used for enrichment analysis and heatmap visualization.
+We first integrate gene-level trends across samples using `PseudotimeMSProcess()`. For each gene, sample-specific pattern labels are retained only if the gene passes the q-value threshold (default qval = 0.05). A consensus pattern is then assigned as the most frequent pattern across samples, and a confidence score is computed as the proportion of samples supporting this dominant pattern. Genes with confidence greater than or equal to conf = 0.75 (default) are retained.
 
-Below we visualize selected lineage marker genes from the top 1000 most significant genes, using the `PseudotimeHeatmapMS()` function.
+This integration step returns a structured list object containing the averaged fitted expression trajectory across valid samples (`mean_expr`), the consensus pattern labels derived from the mean trajectory (`mean_pattern`), a consensus pattern table with confidence scores (`df_pattern`), the filtered q-value matrix aligned to retained genes (`df_qvalue`), and a collection of sample-wise switch point interval matrices (`df_switch_point`). These components together provide the foundation for downstream ranking, enrichment analysis, and multi-sample heatmap visualization.
 
+After multi-sample integration, we further restrict the analysis to the top-ranked genes using the `SelectTopGenes()` function. This step selects a subset of genes with the strongest overall statistical support across samples and subsets all associated components (mean expression, consensus patterns, q-values, and switch points) accordingly.
+
+In this tutorial, we retain the top 1000 genes for visualization and downstream analysis.
+
+These outputs are used for downstream enrichment analysis and multi-sample heatmap visualization.
+
+Below we visualize selected lineage marker genes from the top 1000 most significant genes, using the `PseudotimeHeatmapMS()`function.
+
+### 7.1: Multi-sample integration (code example)
+The following code shows how to integrate eight single-sample Pseudotimecascade results.
+
+Because the full multi-sample object is large and not included in the package, this chunk is provided for illustration and is not evaluated.
+
+```{r multi-sample-workflow, eval = FALSE}
+gene_mean_list <- PseudotimeMSProcess(stip_list)
+top_mean_list <- SelectTopGenes(gene_mean_list, top=1000)
+```
+
+
+### 7.2: Visualize reproducible patterns and switch-point heterogeneity
+
+Below we load a precomputed multi-sample result (top 1,000 genes) distributed with the package and visualize lineage marker genes using `PseudotimeHeatmapMS()`. The heatmap rows follow the consensus pattern ordering, while the overlaid points/segments summarize sample-level switch-point heterogeneity.
 ```{r multi-heatmap, fig.width = 6, fig.height=8, message=FALSE, warning=FALSE}
+library(Pseudotimecascade)
+
 # Load Pseudotimecascade results from multi-sample integration
-gene_mean_list <- readRDS(system.file("extdata", "pseudo_list_multi_sample.rds", package = "Pseudotimecascade"))
+top_mean_list <- readRDS(system.file("extdata", "pseudo_list_multi_sample.rds", package = "Pseudotimecascade"))
 
 # Define marker genes
 hsc_genes <- c('ERG', 'HOXA5', 'HOXA9', 'HOXA10', 'LCOR', 'RUNX1', 'SPI1', "CD34")
@@ -243,10 +270,10 @@ marked_genes <- unique(c(hsc_genes, cmp_genes, ery_genes))
 
 # Draw heatmap
 p <- PseudotimeHeatmapMS(
-  x = gene_mean_list[["mean_expr"]],
+  x = top_mean_list[["mean_expr"]],
   gl = marked_genes,
-  annotation = as.matrix(gene_mean_list[["mean_pattern"]])[, "pattern"],
-  interval = gene_mean_list[["df_switch_point"]],
+  annotation = as.matrix(top_mean_list[["mean_pattern"]])[, "pattern"],
+  interval = top_mean_list[["df_switch_point"]],
   use_raster = FALSE
 )
 p

@@ -4,7 +4,7 @@
 \alias{PseudotimeHeatmap}
 \title{PseudotimeHeatmap}
 \usage{
-PseudotimeHeatmap(x, gl, annotation, ...)
+PseudotimeHeatmap(x, gl, annotation, show_sp = FALSE, switch_point = NULL, ...)
 }
 \arguments{
 \item{x}{A gene expression matrix}
@@ -12,6 +12,11 @@ PseudotimeHeatmap(x, gl, annotation, ...)
 \item{gl}{Marked gene list}
 
 \item{annotation}{Annotation matrix for genes in expression matrix}
+
+\item{show_sp}{Logical; whether to overlay switch points on the heatmap (default: FALSE).}
+
+\item{switch_point}{Named character vector of switch points for each gene (e.g., \code{"12,35"}).
+Names should match \code{rownames(x)}; values are comma-separated column indices.}
 
 \item{...}{parameters passed to Heatmap}
 }
@@ -22,7 +27,8 @@ A ComplexHeatmap object
 Generate heatmap for Pseudotimecascade result
 }
 \details{
-Input a gene expression matrix and annotation matrixes, output a heatmap
+Input a gene expression matrix and annotation matrixes, output a heatmap.
+         Optionally, switch points can be overlaid on the heatmap as dots when \code{show_sp = TRUE}.
 }
 \author{
 Zhicheng Ji, Changxin Wan, Beijie Ji

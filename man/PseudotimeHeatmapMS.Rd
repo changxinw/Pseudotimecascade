@@ -13,7 +13,9 @@ PseudotimeHeatmapMS(x, gl, annotation, interval, ...)
 
 \item{annotation}{Annotation matrix for genes in expression matrix}
 
-\item{interval}{A list contains zero points for each gene in each sample}
+\item{interval}{A list of switch point index data.frames (one per sample),
+or a single data.frame. Each element should have rows as genes and columns as samples,
+containing switch point indices (with \code{NA} allowed).}
 
 \item{...}{parameters passed to Heatmap}
 }
@@ -24,7 +26,9 @@ A ComplexHeatmap object
 Generate heatmap for multi-sample Pseudotimecascade result
 }
 \details{
-Input a gene expression matrix and annotation matrixes, output a heatmap
+Input a gene expression matrix and annotation matrixes, output a heatmap.
+         Sample-level switch points are overlaid as points, and the corresponding confidence intervals
+         across samples are shown as line segments.
 }
 \author{
 Zhicheng Ji, Changxin Wan, Beijie Ji

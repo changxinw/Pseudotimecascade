@@ -60,7 +60,9 @@
 
 
 <dt id="arg-interval">interval<a class="anchor" aria-label="anchor" href="#arg-interval"></a></dt>
-<dd><p>A list contains zero points for each gene in each sample</p></dd>
+<dd><p>A list of switch point index data.frames (one per sample),
+or a single data.frame. Each element should have rows as genes and columns as samples,
+containing switch point indices (with <code>NA</code> allowed).</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -73,7 +75,9 @@
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Input a gene expression matrix and annotation matrixes, output a heatmap</p>
+    <p>Input a gene expression matrix and annotation matrixes, output a heatmap.
+         Sample-level switch points are overlaid as points, and the corresponding confidence intervals
+         across samples are shown as line segments.</p>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
@@ -89,7 +93,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>
